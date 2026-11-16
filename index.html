@@ -786,12 +786,13 @@
     }
 
     function createRadarChart(totals) {
-      const center = 180;
+      const center = 210;
       const radius = 108;
-      const labelRadius = 146;
+      const labelRadius = 132;
       const angleFor = index => -Math.PI / 2 + index * Math.PI * 2 / totals.length;
-      const pointsAt = scale => totals.map((item, index) => {
+      const pointsAt = scales => totals.map((item, index) => {
         const angle = angleFor(index);
+        const scale = Array.isArray(scales) ? scales[index] : scales;
         const distance = radius * scale;
         return `${(center + Math.cos(angle) * distance).toFixed(1)},${(center + Math.sin(angle) * distance).toFixed(1)}`;
       }).join(" ");
@@ -815,7 +816,7 @@
         return `<circle class="radar-point" cx="${(center + Math.cos(angle) * distance).toFixed(1)}" cy="${(center + Math.sin(angle) * distance).toFixed(1)}" r="4"></circle>`;
       }).join("");
       const label = totals.map(item => `${item.name} ${item.value}`).join("，");
-      return `<svg class="radar-chart" viewBox="0 0 360 360" role="img" aria-label="维度雷达图：${label}">${rings}${axes}<polygon class="radar-shape" points="${shape}"></polygon>${markers}${labels}</svg>`;
+      return `<svg class="radar-chart" viewBox="0 0 420 360" role="img" aria-label="维度雷达图：${label}">${rings}${axes}<polygon class="radar-shape" points="${shape}"></polygon>${markers}${labels}</svg>`;
     }
 
     function renderStoryLog() {
