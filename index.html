@@ -120,6 +120,19 @@
     .option.selected .option-check { opacity: 1; }
     .feedback { display: flex; gap: 9px; margin: 12px 0 0; color: #566a5d; font-size: 12px; line-height: 1.65; }
     .feedback[hidden] { display: none; }
+    .live-analysis { margin-top: 18px; padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: #fafaf6; }
+    .live-analysis-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+    .live-analysis-head h3 { margin: 0; font-size: 12px; }
+    .live-analysis-head span { color: var(--muted); font-size: 10px; }
+    .live-dimensions { display: grid; grid-template-columns: 1fr 1fr; column-gap: 22px; }
+    .live-score-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) 28px; align-items: center; gap: 8px; margin: 7px 0; }
+    .live-score-label { overflow: hidden; color: #52615a; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .live-score-track { height: 6px; overflow: hidden; border-radius: 9px; background: #e9eee7; }
+    .live-score-fill { height: 100%; border-radius: inherit; background: #75a186; transition: width .25s ease; }
+    .live-score-value { color: var(--green); font-size: 10px; font-weight: 750; text-align: right; }
+    .choice-impact { min-height: 17px; margin: 10px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .impact-up { color: var(--green-dark); font-weight: 700; }
+    .impact-down { color: #a96840; font-weight: 700; }
     .scenario-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
     .text-button { padding: 9px 0; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 12px; }
     .text-button:hover { color: var(--green); }
@@ -128,11 +141,25 @@
     .result-intro { max-width: 550px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
     .result-badge { flex: 0 0 auto; padding: 9px 12px; border: 1px solid #d5e5d7; border-radius: 10px; color: var(--green); background: #eff6ef; font-size: 11px; font-weight: 700; }
     .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .result-overview { display: grid; grid-template-columns: minmax(250px, .9fr) minmax(0, 1.1fr); gap: 14px; margin-bottom: 14px; }
+    .radar-panel, .result-insights { min-width: 0; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--white); }
+    .radar-panel { display: flex; flex-direction: column; align-items: center; }
+    .radar-panel .panel-title { align-self: flex-start; }
+    .radar-chart { width: min(100%, 360px); height: auto; overflow: visible; }
+    .radar-grid { fill: none; stroke: #e8ebe3; stroke-width: 1; }
+    .radar-axis { stroke: #e8ebe3; stroke-width: 1; }
+    .radar-shape { fill: rgba(229, 154, 91, .2); stroke: var(--orange); stroke-width: 2.5; stroke-linejoin: round; }
+    .radar-point { fill: var(--orange); stroke: white; stroke-width: 2; }
+    .radar-label { fill: #52615a; font-size: 11px; font-weight: 650; }
+    .result-lead { margin: 0 0 14px; color: #53615a; font-size: 12px; line-height: 1.75; }
+    .score-legend { margin: -7px 0 13px; color: #89928a; font-size: 10px; line-height: 1.6; }
+    .dimension-list { display: grid; gap: 8px; }
+    .dimension-item { display: grid; grid-template-columns: 90px minmax(0, 1fr) 30px; align-items: center; gap: 8px; padding: 9px 10px; border: 1px solid #eef0e9; border-radius: 10px; background: #fcfcf9; }
+    .dimension-name { color: #46564d; font-size: 10px; font-weight: 700; }
+    .dimension-note { grid-column: 2 / -1; margin-top: -3px; color: #89928a; font-size: 9px; }
     .report-panel { padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--white); }
     .report-panel.wide { grid-column: 1 / -1; }
     .panel-title { margin: 0 0 16px; font-size: 13px; font-weight: 750; }
-    .score-row { display: grid; grid-template-columns: 112px minmax(0, 1fr) 31px; align-items: center; gap: 10px; margin: 12px 0; }
-    .score-label { color: #52615a; font-size: 11px; }
     .score-track { height: 7px; overflow: hidden; border-radius: 9px; background: #edf0e9; }
     .score-fill { height: 100%; border-radius: inherit; background: #75a186; }
     .score-value { color: var(--green); font-size: 11px; font-weight: 750; text-align: right; }
@@ -143,9 +170,26 @@
     .practice { padding: 12px; border-radius: 10px; background: #f4f5ef; color: #58665e; font-size: 11px; line-height: 1.7; }
     .practice b { display: block; margin-bottom: 4px; color: var(--green-dark); font-size: 11px; }
     .report-actions { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 18px; }
-    .result-buttons { display: flex; align-items: center; gap: 9px; }
+    .result-actions-stack { display: grid; justify-items: end; gap: 8px; }
+    .result-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 9px; }
+    .share-status { margin: 0; color: var(--green-dark); font-size: 11px; }
+    .share-text { width: min(440px, 100%); padding: 9px; border: 1px solid var(--line); border-radius: 9px; color: var(--ink); background: white; font: inherit; font-size: 11px; line-height: 1.6; }
     .disclaimer { max-width: 480px; margin: 0; color: #828b84; font-size: 10px; line-height: 1.7; }
     .footer-note { margin: 22px 0 0; color: #89928a; font-size: 11px; text-align: center; }
+    .story-log { width: min(680px, calc(100% - 28px)); max-height: min(82vh, 760px); padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--white); box-shadow: var(--shadow); }
+    .story-log::backdrop { background: rgba(28, 39, 33, .42); backdrop-filter: blur(3px); }
+    .story-log-head { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; padding: 23px 25px 17px; border-bottom: 1px solid var(--line); background: var(--white); }
+    .story-log-head h2 { margin: 7px 0 4px; font-family: Georgia, "Noto Serif SC", "Songti SC", serif; font-size: 24px; font-weight: 600; }
+    .story-log-head p { margin: 0; color: var(--muted); font-size: 11px; }
+    .story-log-list { display: grid; gap: 10px; margin: 0; padding: 18px 25px 25px 46px; overflow-y: auto; }
+    .story-log-entry { padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fcfcf9; }
+    .story-log-entry h3 { margin: 0 0 8px; font-size: 12px; }
+    .story-log-choice { margin: 0 0 7px; color: #46564d; font-size: 12px; line-height: 1.7; }
+    .story-log-choice.pending { color: #929b93; font-style: italic; }
+    .story-log-feedback { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
+    .story-log-impact { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .impact-chip { padding: 4px 7px; border-radius: 99px; background: #eef3ed; color: var(--green-dark); font-size: 9px; }
+    .impact-chip.down { background: #fbf0e9; color: #9c603c; }
     [hidden] { display: none !important; }
 
     @media (max-width: 760px) {
@@ -171,15 +215,22 @@
       .scenario-context { margin: 15px 0 17px; padding: 13px; }
       .scenario-tools { gap: 6px; }
       .scenario-tools .time-label { display: none; }
+      .live-dimensions { grid-template-columns: 1fr; }
+      .live-score-row { grid-template-columns: 96px minmax(0, 1fr) 28px; }
       .option { padding: 12px; grid-template-columns: 25px minmax(0, 1fr) 14px; gap: 8px; }
       .option-text { font-size: 12px; }
-      .score-row { grid-template-columns: 100px minmax(0, 1fr) 27px; gap: 7px; }
       .report-grid { grid-template-columns: 1fr; }
+      .result-overview { grid-template-columns: 1fr; }
+      .radar-chart { width: min(100%, 330px); }
+      .dimension-item { grid-template-columns: 82px minmax(0, 1fr) 28px; }
       .report-panel.wide { grid-column: auto; }
       .practice-list { grid-template-columns: 1fr; }
       .result-top { flex-direction: column; margin-bottom: 18px; }
       .report-actions { align-items: flex-start; flex-direction: column-reverse; }
-      .result-buttons { flex-wrap: wrap; }
+      .result-actions-stack { justify-items: start; width: 100%; }
+      .result-buttons { justify-content: flex-start; }
+      .story-log-head { padding: 19px 17px 14px; }
+      .story-log-list { padding: 14px 15px 20px 34px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
@@ -229,6 +280,7 @@
               <span class="scenario-count" id="scenario-count"></span>
               <div class="scenario-tools">
                 <span class="time-label">约 2 分钟 · 没有标准答案</span>
+                <button class="text-button" id="log-button" type="button">剧情日志</button>
                 <button class="text-button" id="home-button" type="button">⌂ 返回主页</button>
               </div>
             </div>
@@ -243,6 +295,14 @@
             <p class="side-label">你会更倾向于怎么做？</p>
             <div class="options" id="options"></div>
             <p class="feedback" id="feedback" hidden><span aria-hidden="true">✦</span><span id="feedback-text"></span></p>
+            <section class="live-analysis" aria-label="实时维度评分">
+              <div class="live-analysis-head">
+                <h3>实时维度观察</h3>
+                <span>50 为起点，非能力分数</span>
+              </div>
+              <div class="live-dimensions" id="live-dimensions"></div>
+              <p class="choice-impact" id="choice-impact" aria-live="polite">选择一个做法后，会看到相关维度的变化。</p>
+            </section>
             <div class="scenario-actions">
               <button class="text-button" id="back-button" type="button">← 上一题</button>
               <button class="primary" id="next-button" type="button" disabled>下一题 <span aria-hidden="true">→</span></button>
@@ -255,6 +315,18 @@
       <p class="footer-note">用好奇心认识自己，也给每一种成长留出空间。</p>
     </main>
   </div>
+
+  <dialog class="story-log" id="story-log" aria-labelledby="story-log-title">
+    <div class="story-log-head">
+      <div>
+        <span class="eyebrow">过程回顾</span>
+        <h2 id="story-log-title">剧情日志</h2>
+        <p id="story-log-caption"></p>
+      </div>
+      <button class="text-button" id="close-log-button" type="button" aria-label="关闭剧情日志">关闭 ×</button>
+    </div>
+    <ol class="story-log-list" id="story-log-list"></ol>
+  </dialog>
 
   <script>
     const teacherDimensions = [
@@ -516,6 +588,65 @@
       }
     ];
 
+    const cautionChoices = {
+      teacher: [
+        "先按原有课堂安排继续，课后再了解这次互动背后的原因。",
+        "先用自己熟悉的方式把活动推进下去，再观察学生后续的反应。",
+        "先提醒大家照常完成任务，等出现更多反馈后再调整做法。",
+        "先照原教案把内容讲完，课后再准备更容易理解的例子。",
+        "先说明自己的处理考虑，之后再听家长补充具体担忧。",
+        "先选自己熟悉的活动方案，细化分工和时间之后再说。"
+      ],
+      healthcare: [
+        "先按常规流程说明检查步骤，等患者继续提问时再细说他的具体担忧。",
+        "先把不一致处标记下来，等当前交接结束后再找交班同事核实。",
+        "先按应急流程呼叫支援，自己继续处理手头工作并留意现场变化。",
+        "先解释现有照护安排，之后再逐项了解家属希望调整的地方。",
+        "先把待办记在临时清单里，忙完当前环节后再补录交接信息。"
+      ],
+      product: [
+        "先根据这条反馈做一个小调整，之后再看是否有更多用户提到同类问题。",
+        "先按提出时间最早的需求排期，之后再确认它和另一项工作的优先级。",
+        "先各自描述可行方案，等大家想到更多细节后再回到目标问题。",
+        "先根据当前指标决定暂时保留功能，之后再补充核对实际使用过程。",
+        "先分别回复各团队目前的安排，等出现冲突时再集中协调依赖。"
+      ],
+      engineer: [
+        "先尝试一个最可能的修复方向，之后再补充复现记录和边界验证。",
+        "先说明自己认为原方案更简洁，若仍有分歧再找共同标准比较。",
+        "先集中完成功能实现，测试范围等初步完成后再与团队确认。",
+        "先修复当前触发的输入问题，其他边界情形稍后再一起检查。",
+        "先从最熟悉的文件开始修改，遇到不清楚的依赖再查调用关系。"
+      ],
+      designer: [
+        "先按自己熟悉的风格做一版，再请需求方确认是否符合目标受众。",
+        "先调整自己最有把握的视觉元素，等收到具体意见后再核对整体方向。",
+        "先完成桌面版视觉稿，移动端细节在评审后再集中检查。",
+        "先用熟悉的表达方式完成提案，再用规范逐项核对适配性。",
+        "先逐项完成各个物料，临近交付时再统一检查视觉一致性。"
+      ]
+    };
+    const cautionFeedback = {
+      teacher: "熟悉的做法有时能让课堂顺利推进，但可能少听到学生的真实想法；之后可以补一次确认。",
+      healthcare: "常规做法有助于保持流程连贯，也记得按规范及时核实信息、确认个体需求并寻求协作。",
+      product: "先推进能节省讨论时间，但可能漏掉需求背景；可以用后续反馈及时校准。",
+      engineer: "熟悉的路径能快速启动，仍要记得补足必要验证、测试或协作同步。",
+      designer: "先动手有助于具象化方向，也可以及时回到受众、规范和使用场景核对。"
+    };
+    careers.forEach(career => {
+      career.scenarios.forEach((scenario, scenarioIndex) => {
+        const scores = career.dimensions.map((_, dimensionIndex) => {
+          const average = scenario.options.reduce((sum, option) => sum + option.scores[dimensionIndex], 0) / scenario.options.length;
+          return Math.round(average);
+        });
+        scenario.options.push({
+          text: cautionChoices[career.id][scenarioIndex],
+          feedback: cautionFeedback[career.id],
+          scores
+        });
+      });
+    });
+
     const careerProgress = new Map(careers.map(career => [
       career.id,
       { answers: Array(career.scenarios.length).fill(null), currentIndex: 0 }
@@ -592,6 +723,7 @@
       const next = document.getElementById("next-button");
       next.disabled = saved === null;
       next.innerHTML = index === activeCareer.scenarios.length - 1 ? "查看我的观察 <span aria-hidden=\"true\">→</span>" : "下一题 <span aria-hidden=\"true\">→</span>";
+      updateLiveAnalysis();
     }
 
     function selectOption(optionIndex) {
@@ -605,24 +737,306 @@
       document.getElementById("feedback-text").textContent = scenario.options[optionIndex].feedback;
       document.getElementById("feedback").hidden = false;
       document.getElementById("next-button").disabled = false;
+      updateLiveAnalysis();
+    }
+
+    function getScenarioDeltas(scenarioIndex, optionIndex) {
+      const scenario = activeCareer.scenarios[scenarioIndex];
+      const selected = scenario.options[optionIndex];
+      return activeCareer.dimensions.map((dimension, dimensionIndex) => {
+        const average = scenario.options.reduce((sum, option) => sum + option.scores[dimensionIndex], 0) / scenario.options.length;
+        return { ...dimension, delta: Math.round((selected.scores[dimensionIndex] - average) * 8) };
+      });
     }
 
     function getObservations() {
       const totals = activeCareer.dimensions.map((dimension, dimensionIndex) => {
-        const raw = answers.reduce((sum, optionIndex, scenarioIndex) => sum + activeCareer.scenarios[scenarioIndex].options[optionIndex].scores[dimensionIndex], 0);
-        return { ...dimension, value: Math.round(raw / activeCareer.scenarios.length / 2 * 100) };
+        const raw = answers.reduce((sum, optionIndex, scenarioIndex) => {
+          if (optionIndex === null) return sum;
+          return sum + getScenarioDeltas(scenarioIndex, optionIndex)[dimensionIndex].delta;
+        }, 0);
+        return { ...dimension, value: Math.max(0, Math.min(100, 50 + raw)) };
       });
       const sorted = [...totals].sort((a, b) => b.value - a.value);
-      const high = sorted.filter(item => item.value >= 65);
-      const low = [...sorted].reverse().filter(item => item.value < 50);
+      const high = sorted.filter(item => item.value >= 56);
+      const low = [...sorted].reverse().filter(item => item.value <= 44);
       return { totals, strengths: high.length ? high.slice(0, 2) : sorted.slice(0, 1), challenges: low.slice(0, 2) };
+    }
+
+    function updateLiveAnalysis() {
+      const totals = getObservations().totals;
+      document.getElementById("live-dimensions").innerHTML = totals.map(item => `
+        <div class="live-score-row">
+          <span class="live-score-label">${item.name}</span>
+          <span class="live-score-track"><span class="live-score-fill" style="display:block;width:${item.value}%"></span></span>
+          <span class="live-score-value">${item.value}</span>
+        </div>`).join("");
+      const selectedIndex = answers[currentIndex];
+      const impact = document.getElementById("choice-impact");
+      if (selectedIndex === null) {
+        impact.textContent = "选择一个做法后，会看到相关维度的变化。";
+      } else {
+        const changes = getScenarioDeltas(currentIndex, selectedIndex).filter(item => item.delta !== 0);
+        impact.innerHTML = changes.length
+          ? `本次选择变化：${changes.map(item => `<span class="${item.delta > 0 ? "impact-up" : "impact-down"}">${item.name} ${item.delta > 0 ? "+" : ""}${item.delta}</span>`).join("　")}`
+          : "本次选择与该情境的平均倾向接近，分数没有明显变化。";
+      }
+      const answered = answers.filter(answer => answer !== null).length;
+      document.getElementById("log-button").textContent = `剧情日志 ${answered}/${activeCareer.scenarios.length}`;
+    }
+
+    function createRadarChart(totals) {
+      const center = 180;
+      const radius = 108;
+      const labelRadius = 146;
+      const angleFor = index => -Math.PI / 2 + index * Math.PI * 2 / totals.length;
+      const pointsAt = scale => totals.map((item, index) => {
+        const angle = angleFor(index);
+        const distance = radius * scale;
+        return `${(center + Math.cos(angle) * distance).toFixed(1)},${(center + Math.sin(angle) * distance).toFixed(1)}`;
+      }).join(" ");
+      const rings = [0.25, 0.5, 0.75, 1].map(level => `<polygon class="radar-grid" points="${pointsAt(level)}"></polygon>`).join("");
+      const axes = totals.map((_, index) => {
+        const angle = angleFor(index);
+        return `<line class="radar-axis" x1="${center}" y1="${center}" x2="${(center + Math.cos(angle) * radius).toFixed(1)}" y2="${(center + Math.sin(angle) * radius).toFixed(1)}"></line>`;
+      }).join("");
+      const shape = pointsAt(totals.map(item => item.value / 100));
+      const labels = totals.map((item, index) => {
+        const angle = angleFor(index);
+        const x = center + Math.cos(angle) * labelRadius;
+        const y = center + Math.sin(angle) * labelRadius;
+        const anchor = Math.cos(angle) > 0.25 ? "start" : Math.cos(angle) < -0.25 ? "end" : "middle";
+        const baseline = Math.sin(angle) > 0.4 ? "hanging" : Math.sin(angle) < -0.4 ? "auto" : "middle";
+        return `<text class="radar-label" x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}" dominant-baseline="${baseline}">${item.name}</text>`;
+      }).join("");
+      const markers = totals.map((item, index) => {
+        const angle = angleFor(index);
+        const distance = radius * item.value / 100;
+        return `<circle class="radar-point" cx="${(center + Math.cos(angle) * distance).toFixed(1)}" cy="${(center + Math.sin(angle) * distance).toFixed(1)}" r="4"></circle>`;
+      }).join("");
+      const label = totals.map(item => `${item.name} ${item.value}`).join("，");
+      return `<svg class="radar-chart" viewBox="0 0 360 360" role="img" aria-label="维度雷达图：${label}">${rings}${axes}<polygon class="radar-shape" points="${shape}"></polygon>${markers}${labels}</svg>`;
+    }
+
+    function renderStoryLog() {
+      const list = document.getElementById("story-log-list");
+      list.replaceChildren();
+      const answered = answers.filter(answer => answer !== null).length;
+      document.getElementById("story-log-caption").textContent = `${activeCareer.name} · 已完成 ${answered}/${activeCareer.scenarios.length} 个情境`;
+      activeCareer.scenarios.forEach((scenario, scenarioIndex) => {
+        const entry = document.createElement("li");
+        entry.className = "story-log-entry";
+        const title = document.createElement("h3");
+        title.textContent = `${String(scenarioIndex + 1).padStart(2, "0")} · ${scenario.title}`;
+        entry.append(title);
+        const answerIndex = answers[scenarioIndex];
+        const choice = document.createElement("p");
+        choice.className = `story-log-choice${answerIndex === null ? " pending" : ""}`;
+        choice.textContent = answerIndex === null ? "尚未选择" : `你的选择：${scenario.options[answerIndex].text}`;
+        entry.append(choice);
+        if (answerIndex !== null) {
+          const feedback = document.createElement("p");
+          feedback.className = "story-log-feedback";
+          feedback.textContent = scenario.options[answerIndex].feedback;
+          entry.append(feedback);
+          const chips = document.createElement("div");
+          chips.className = "story-log-impact";
+          getScenarioDeltas(scenarioIndex, answerIndex).filter(item => item.delta !== 0).forEach(item => {
+            const chip = document.createElement("span");
+            chip.className = `impact-chip${item.delta < 0 ? " down" : ""}`;
+            chip.textContent = `${item.name} ${item.delta > 0 ? "+" : ""}${item.delta}`;
+            chips.append(chip);
+          });
+          entry.append(chips);
+        }
+        list.append(entry);
+      });
+    }
+
+    function openStoryLog() {
+      renderStoryLog();
+      const dialog = document.getElementById("story-log");
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+    }
+
+    function buildShareText() {
+      const { totals } = getObservations();
+      const dimensions = totals.map(item => `${item.name} ${item.value}`).join(" · ");
+      return `我完成了「${activeCareer.name}职业情境体验」。本次选择倾向：${dimensions}。这只是情境探索，不是正式测评。${window.location.href}`;
+    }
+
+    async function shareResults() {
+      const status = document.getElementById("share-status");
+      const text = buildShareText();
+      if (typeof navigator.share === "function") {
+        try {
+          await navigator.share({ title: `${activeCareer.name}情境回顾`, text });
+          status.textContent = "分享面板已打开。";
+          return;
+        } catch (error) {
+          if (error.name === "AbortError") return;
+        }
+      }
+      try {
+        if (!navigator.clipboard || !window.isSecureContext) throw new Error("剪贴板不可用");
+        await navigator.clipboard.writeText(text);
+        status.textContent = "结果摘要已复制，可以粘贴分享。";
+      } catch (error) {
+        const textarea = document.getElementById("share-text");
+        textarea.value = text;
+        textarea.hidden = false;
+        textarea.focus();
+        textarea.select();
+        status.textContent = "无法自动复制，请复制已选中的结果摘要。";
+      }
+    }
+
+    function drawShareCard(totals, canvas) {
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Canvas is unavailable");
+      const width = canvas.width;
+      const height = canvas.height;
+      context.fillStyle = "#f5f4ee";
+      context.fillRect(0, 0, width, height);
+      context.fillStyle = "#fffefa";
+      context.fillRect(42, 42, width - 84, height - 84);
+      context.fillStyle = "#2e6754";
+      context.font = "700 24px Microsoft YaHei, sans-serif";
+      context.fillText("职业情境体验 · 个人观察", 94, 120);
+      context.fillStyle = "#202d29";
+      context.font = "600 48px Microsoft YaHei, sans-serif";
+      context.fillText(`${activeCareer.name}情境回顾`, 94, 190);
+      context.fillStyle = "#6d7973";
+      context.font = "22px Microsoft YaHei, sans-serif";
+      context.fillText("基于本次情境选择 · 探索参考，非正式测评", 94, 235);
+
+      const center = 540;
+      const centerY = 560;
+      const radius = 218;
+      const angleFor = index => -Math.PI / 2 + index * Math.PI * 2 / totals.length;
+      for (let level = 1; level <= 4; level++) {
+        context.beginPath();
+        totals.forEach((_, index) => {
+          const angle = angleFor(index);
+          const x = center + Math.cos(angle) * radius * level / 4;
+          const y = centerY + Math.sin(angle) * radius * level / 4;
+          if (index === 0) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        });
+        context.closePath();
+        context.strokeStyle = "#e8ebe3";
+        context.lineWidth = 2;
+        context.stroke();
+      }
+      totals.forEach((_, index) => {
+        const angle = angleFor(index);
+        context.beginPath();
+        context.moveTo(center, centerY);
+        context.lineTo(center + Math.cos(angle) * radius, centerY + Math.sin(angle) * radius);
+        context.strokeStyle = "#e8ebe3";
+        context.stroke();
+      });
+      context.beginPath();
+      totals.forEach((item, index) => {
+        const angle = angleFor(index);
+        const distance = radius * item.value / 100;
+        const x = center + Math.cos(angle) * distance;
+        const y = centerY + Math.sin(angle) * distance;
+        if (index === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      });
+      context.closePath();
+      context.fillStyle = "rgba(229, 154, 91, .2)";
+      context.strokeStyle = "#e59a5b";
+      context.lineWidth = 5;
+      context.fill();
+      context.stroke();
+      totals.forEach((item, index) => {
+        const angle = angleFor(index);
+        const distance = radius * item.value / 100;
+        const x = center + Math.cos(angle) * distance;
+        const y = centerY + Math.sin(angle) * distance;
+        context.beginPath();
+        context.arc(x, y, 7, 0, Math.PI * 2);
+        context.fillStyle = "#e59a5b";
+        context.fill();
+        const labelDistance = radius + 36;
+        context.fillStyle = "#52615a";
+        context.font = "600 19px Microsoft YaHei, sans-serif";
+        context.textAlign = Math.cos(angle) > 0.25 ? "left" : Math.cos(angle) < -0.25 ? "right" : "center";
+        context.textBaseline = Math.sin(angle) > 0.4 ? "top" : Math.sin(angle) < -0.4 ? "bottom" : "middle";
+        context.fillText(item.name, center + Math.cos(angle) * labelDistance, centerY + Math.sin(angle) * labelDistance);
+      });
+
+      context.textAlign = "left";
+      context.textBaseline = "alphabetic";
+      context.fillStyle = "#202d29";
+      context.font = "700 26px Microsoft YaHei, sans-serif";
+      context.fillText("五个维度的选择倾向", 100, 860);
+      totals.forEach((item, index) => {
+        const y = 920 + index * 64;
+        context.fillStyle = "#52615a";
+        context.font = "22px Microsoft YaHei, sans-serif";
+        context.fillText(item.name, 100, y + 20);
+        context.fillStyle = "#edf0e9";
+        context.fillRect(330, y, 560, 14);
+        context.fillStyle = "#75a186";
+        context.fillRect(330, y, 560 * item.value / 100, 14);
+        context.fillStyle = "#2e6754";
+        context.font = "700 20px Microsoft YaHei, sans-serif";
+        context.textAlign = "right";
+        context.fillText(String(item.value), 950, y + 15);
+        context.textAlign = "left";
+      });
+      context.fillStyle = "#89928a";
+      context.font = "18px Microsoft YaHei, sans-serif";
+      context.fillText("结果仅供自我觉察，不构成能力或职业适配度结论。", 100, 1305);
+      context.fillText(window.location.href, 100, 1340);
+    }
+
+    async function createShareCard() {
+      const status = document.getElementById("share-status");
+      const canvas = document.createElement("canvas");
+      canvas.width = 1080;
+      canvas.height = 1400;
+      try {
+        drawShareCard(getObservations().totals, canvas);
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+        if (!blob) throw new Error("Image export failed");
+        const filename = `${activeCareer.id}-career-reflection.png`;
+        if (typeof File === "function" && typeof navigator.share === "function" && navigator.canShare) {
+          const file = new File([blob], filename, { type: "image/png" });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: `${activeCareer.name}情境回顾`, text: "我的职业情境体验观察" });
+            status.textContent = "分享卡已打开分享面板。";
+            return;
+          }
+        }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.append(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        status.textContent = "分享卡已下载，可以保存或转发。";
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        status.textContent = "暂时无法生成分享卡，请使用“分享结果”复制摘要。";
+      }
     }
 
     function makeResults() {
       const { totals, strengths, challenges } = getObservations();
-      const strengthText = strengths.map(item => `<p class="insight"><strong>${item.name}</strong>：你的选择里多次出现这一倾向，可以留意它在真实合作或带领活动时如何发挥作用。</p>`).join("");
+      const ordered = [...totals].sort((a, b) => b.value - a.value);
+      const leadText = ordered[0].value >= 56
+        ? `本次情境中，${ordered[0].name}相关的应对方式较常出现。它是一条可以继续观察的线索，不代表固定能力或职业结论。`
+        : "不同情境下的选择比较灵活，目前没有特别突出的单一维度；可以继续留意不同环境如何影响你的做法。";
+      const strengthText = strengths.map(item => `<p class="insight"><strong>${item.name}</strong>：这次选择里较常出现相关应对方式，可以观察它在真实合作或工作任务中如何发挥作用。</p>`).join("");
       const challengeText = challenges.length
-        ? challenges.map(item => `<p class="insight"><strong>${item.name}</strong>：这次情境中的选择较少体现这一侧面，不代表你不擅长；可以在实际经验里继续观察。</p>`).join("")
+        ? challenges.map(item => `<p class="insight"><strong>${item.name}</strong>：这次较少选择相关做法，不代表你不擅长；也可以看看情境条件是否影响了你的判断。</p>`).join("")
         : `<p class="insight">各维度的选择分布比较均衡。不同情境可能会让你采用不同策略，不必急着把自己归入某一种类型。</p>`;
       resultsScreen.innerHTML = `
         <div class="result-top">
@@ -631,11 +1045,24 @@
           </div>
           <span class="result-badge">探索参考 · 非正式测评</span>
         </div>
-        <div class="report-grid">
-          <section class="report-panel wide" aria-label="维度选择倾向">
-            <h3 class="panel-title">五个维度的选择倾向</h3>
-            ${totals.map(item => `<div class="score-row"><span class="score-label">${item.name}</span><div class="score-track" role="img" aria-label="${item.name} ${item.value}%"><div class="score-fill" style="width:${item.value}%"></div></div><span class="score-value">${item.value}</span></div>`).join("")}
+        <div class="result-overview">
+          <section class="radar-panel">
+            <h3 class="panel-title">五维选择倾向</h3>
+            ${createRadarChart(totals)}
           </section>
+          <section class="result-insights">
+            <h3 class="panel-title">本次选择观察</h3>
+            <p class="result-lead">${leadText}</p>
+            <p class="score-legend">50 为中间起点；数值呈现你相对选择了哪些应对方式，不代表能力百分比。</p>
+            <div class="dimension-list">
+              ${totals.map(item => {
+                const note = item.value >= 56 ? "相关应对方式较常出现" : item.value <= 44 ? "相关应对方式较少出现" : "选择分布相对均衡";
+                return `<div class="dimension-item"><span class="dimension-name">${item.name}</span><span class="score-track"><span class="score-fill" style="display:block;width:${item.value}%"></span></span><span class="score-value">${item.value}</span><span class="dimension-note">${note}</span></div>`;
+              }).join("")}
+            </div>
+          </section>
+        </div>
+        <div class="report-grid">
           <section class="report-panel"><h3 class="panel-title">可能的优势线索</h3>${strengthText}</section>
           <section class="report-panel"><h3 class="panel-title">可以继续留意</h3>${challengeText}</section>
           <section class="report-panel wide">
@@ -645,9 +1072,16 @@
         </div>
         <div class="report-actions">
           <p class="disclaimer">本原型不构成心理、能力或职业适配度测评，也不能替代真实教学实践与专业指导。人的能力会随经验、环境和支持而发展。</p>
-          <div class="result-buttons">
-            <button class="secondary" id="career-picker-button" type="button">选择其他职业</button>
-            <button class="primary" id="restart-button" type="button">再体验${activeCareer.name} <span aria-hidden="true">↻</span></button>
+          <div class="result-actions-stack">
+            <div class="result-buttons">
+              <button class="secondary" id="result-log-button" type="button">剧情日志</button>
+              <button class="secondary" id="share-button" type="button">分享结果</button>
+              <button class="secondary" id="share-card-button" type="button">生成分享卡</button>
+              <button class="secondary" id="career-picker-button" type="button">选择其他职业</button>
+              <button class="primary" id="restart-button" type="button">再体验${activeCareer.name} <span aria-hidden="true">↻</span></button>
+            </div>
+            <p class="share-status" id="share-status" aria-live="polite"></p>
+            <textarea class="share-text" id="share-text" rows="3" hidden aria-label="复制结果摘要"></textarea>
           </div>
         </div>`;
       resultsScreen.hidden = false;
@@ -655,6 +1089,9 @@
       updateJourney(2);
       document.getElementById("restart-button").addEventListener("click", restart);
       document.getElementById("career-picker-button").addEventListener("click", showCareerPicker);
+      document.getElementById("result-log-button").addEventListener("click", openStoryLog);
+      document.getElementById("share-button").addEventListener("click", shareResults);
+      document.getElementById("share-card-button").addEventListener("click", createShareCard);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
@@ -677,6 +1114,12 @@
 
     document.getElementById("back-button").addEventListener("click", () => showScenario(currentIndex - 1));
     document.getElementById("home-button").addEventListener("click", showCareerPicker);
+    document.getElementById("log-button").addEventListener("click", openStoryLog);
+    document.getElementById("close-log-button").addEventListener("click", () => {
+      const dialog = document.getElementById("story-log");
+      if (typeof dialog.close === "function") dialog.close();
+      else dialog.removeAttribute("open");
+    });
     document.getElementById("next-button").addEventListener("click", () => {
       if (currentIndex < activeCareer.scenarios.length - 1) showScenario(currentIndex + 1);
       else makeResults();
