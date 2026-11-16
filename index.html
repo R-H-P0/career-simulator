@@ -714,8 +714,8 @@
         const selectedScores = answers.flatMap((optionIndex, scenarioIndex) => (
           optionIndex === null ? [] : [activeCareer.scenarios[scenarioIndex].options[optionIndex].scores[dimensionIndex]]
         ));
-        const average = selectedScores.reduce((sum, score) => sum + score, 0) / selectedScores.length;
-        const value = Math.max(0, Math.min(100, Math.round(60 + (average - 1) * 30)));
+        const average = selectedScores.length?selectedScores.reduce((sum, score) => sum + score, 0) / selectedScores.length:1.5;
+        const value = Math.max(0, Math.min(100, Math.round(55 + (average - 1) * 40)));
         return { ...dimension, value };
       });
       const sorted = [...totals].sort((a, b) => b.value - a.value);
