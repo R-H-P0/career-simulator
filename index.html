@@ -118,6 +118,21 @@
     .scenario-context { display: flex; gap: 14px; align-items: flex-start; margin: 18px 0 22px; padding: 16px; border-radius: 13px; background: #f4f5ef; }
     .context-icon { font-size: 21px; line-height: 1.4; }
     .scenario-context p { margin: 0; color: #53615a; font-size: 13px; line-height: 1.75; }
+    .scenario-dialogue { margin: -7px 0 20px; overflow: hidden; border: 1px solid var(--line); border-radius: 13px; background: var(--white); }
+    .scenario-dialogue[hidden] { display: none; }
+    .dialogue-heading { padding: 10px 13px; border-bottom: 1px solid var(--line); color: var(--muted); background: #fafaf6; font-size: 10px; font-weight: 750; letter-spacing: .04em; }
+    .dialogue-list { display: grid; gap: 10px; padding: 13px; }
+    .dialogue-row { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; animation: dialogue-in .28s ease both; }
+    .dialogue-row:nth-child(2) { animation-delay: .1s; }
+    .dialogue-row:nth-child(3) { animation-delay: .2s; }
+    .dialogue-row:nth-child(4) { animation-delay: .3s; }
+    @keyframes dialogue-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .dialogue-row.from-self { align-items: flex-end; }
+    .dialogue-meta { display: flex; align-items: baseline; gap: 7px; color: #879188; font-size: 9px; }
+    .dialogue-speaker { color: #58665e; font-weight: 700; }
+    .dialogue-bubble { max-width: 90%; padding: 8px 11px; border-radius: 4px 12px 12px 12px; color: #46564d; background: #f1f3ed; font-size: 12px; line-height: 1.7; }
+    .dialogue-row.role-parent .dialogue-bubble { background: var(--orange-pale); }
+    .dialogue-row.from-self .dialogue-bubble { border-radius: 12px 4px 12px 12px; background: #e8f0e9; }
     .options { display: grid; gap: 10px; }
     .option {
       display: grid; grid-template-columns: 26px minmax(0, 1fr) 18px; align-items: start; gap: 11px;
@@ -133,6 +148,12 @@
     .option.selected .option-check { opacity: 1; }
     .feedback { display: flex; gap: 9px; margin: 12px 0 0; color: #566a5d; font-size: 12px; line-height: 1.65; }
     .feedback[hidden] { display: none; }
+    .feedback-content { min-width: 0; }
+    .feedback-content > strong { color: #46564d; font-size: 12px; }
+    .feedback-content p { margin: 5px 0 0; }
+    .feedback-outcome { padding: 8px 10px; border-left: 3px solid var(--orange); border-radius: 0 9px 9px 0; color: #46564d; background: var(--white); }
+    .feedback-analysis { color: var(--muted); font-size: 11px; }
+    .feedback-analysis strong { color: #68756d; }
     .scenario-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
     .text-button { padding: 9px 0; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 12px; }
     .text-button:hover { color: var(--green); }
@@ -198,6 +219,10 @@
     .story-log-list { display: grid; flex: 1 1 auto; min-height: 0; gap: 10px; margin: 0; padding: 18px 25px 25px 46px; overflow-y: auto; overscroll-behavior: contain; }
     .story-log-entry { padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #fcfcf9; }
     .story-log-entry h3 { margin: 0 0 8px; font-size: 12px; }
+    .story-log-dialogue { display: grid; gap: 5px; margin: 0 0 9px; padding: 9px 10px; border-radius: 9px; background: #f4f5ef; }
+    .story-log-dialogue p { margin: 0; color: #647169; font-size: 10px; line-height: 1.6; }
+    .story-log-dialogue .story-log-dialogue-title { color: #52615a; font-weight: 700; }
+    .story-log-outcome { margin: 0 0 7px; color: #46564d; font-size: 11px; line-height: 1.65; }
     .story-log-choice { margin: 0 0 7px; color: #46564d; font-size: 12px; line-height: 1.7; }
     .story-log-choice.pending { color: #929b93; font-style: italic; }
     .story-log-feedback { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
@@ -246,7 +271,7 @@
       .story-log-list { padding: 14px 15px 20px 34px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
     }
   </style>
 </head>
@@ -324,9 +349,20 @@
               <span class="context-icon" id="scenario-icon" aria-hidden="true"></span>
               <p id="scenario-context"></p>
             </div>
+            <section class="scenario-dialogue" id="scenario-dialogue" aria-label="现场对话" hidden>
+              <div class="dialogue-heading" id="dialogue-heading"></div>
+              <div class="dialogue-list" id="dialogue-list"></div>
+            </section>
             <p class="scene-prompt">此刻，你会更倾向于怎么做？</p>
             <div class="options" id="options"></div>
-            <div class="feedback" id="feedback" hidden><span aria-hidden="true">✦</span><span><strong>这一选择可能带来的回应</strong><br><span id="feedback-text"></span></span></div>
+            <div class="feedback" id="feedback" hidden>
+              <span aria-hidden="true">✦</span>
+              <div class="feedback-content">
+                <strong id="feedback-heading"></strong>
+                <p class="feedback-outcome" id="feedback-outcome" hidden></p>
+                <p class="feedback-analysis"><strong>观察线索：</strong><span id="feedback-text"></span></p>
+              </div>
+            </div>
             <div class="scenario-actions">
               <button class="text-button" id="back-button" type="button">← 上一题</button>
               <button class="primary" id="next-button" type="button" disabled>继续进入下一幕 <span aria-hidden="true">→</span></button>
@@ -366,7 +402,13 @@
       {
         title: "有位学生总在回答时跑题",
         icon: "💬",
-        context: "课堂讨论中，小林几次举手发言，却总是说到与问题无关的经历。其他同学开始有些不耐烦，讨论节奏也慢了下来。",
+        context: "八年级（3）班的语文课正在讨论人物描写。小林举手很积极，但他的回答慢慢偏离了问题，后排已经有人开始交头接耳。",
+        dialogueTitle: "八年级（3）班 · 语文课讨论",
+        dialogue: [
+          { speaker: "你", role: "self", text: "作者为什么把这个动作写得这么细？" },
+          { speaker: "小林", role: "student", text: "我爸上周送我来学校，车都开走了又回来拿我的球鞋……" },
+          { speaker: "陈同学", role: "student", text: "老师，我们还在等答案呢。" }
+        ],
         options: [
           { text: "先肯定他愿意分享，再用一个具体问题帮他把想法带回主题。", feedback: "在接住表达的同时引导回到主题，是一种兼顾参与感与课堂节奏的做法。", scores: [2, 2, 1, 1, 1] },
           { text: "说明这次先请其他同学回答，课后再听听他的故事。", feedback: "你留意到全班的节奏，也为个别交流留下了空间。", scores: [1, 1, 2, 1, 1] },
@@ -376,7 +418,13 @@
       {
         title: "作业没有完成，学生显得很沮丧",
         icon: "🌦️",
-        context: "课前你发现一位平时认真完成作业的学生这次空着本子。他低着头说：“我就是做不好，写了也没用。”",
+        context: "早自习前，你发现平时作业完成得很认真的小林只写了半页。他把本子推到桌角，其他同学已经开始交作业。",
+        dialogueTitle: "早自习前 · 讲台旁",
+        dialogue: [
+          { speaker: "你", role: "self", text: "这次卡在哪一步了？我看你做到一半停下来了。" },
+          { speaker: "小林", role: "student", text: "后面几道我照着例题做了，还是不对。我是不是怎么学都学不会？" },
+          { speaker: "同桌", role: "student", text: "老师，他昨天放学留下来写到挺晚的。" }
+        ],
         options: [
           { text: "先问问这次遇到了什么困难，一起把任务拆成一个容易开始的小步骤。", feedback: "先理解处境，再把困难变得可行动，能帮助学生重建一点掌控感。", scores: [1, 2, 1, 2, 1] },
           { text: "提醒他作业是学习的一部分，请他今天课后补齐并告知完成时间。", feedback: "清楚表达学习要求有助于建立边界，后续也可以留意他是否需要具体支持。", scores: [1, 1, 2, 1, 2] },
@@ -386,7 +434,13 @@
       {
         title: "小组活动的声音越来越大",
         icon: "🔔",
-        context: "学生正在分组完成任务，讨论声渐渐盖过了你的提示。几组开始聊起别的话题，而离汇报只剩十分钟。",
+        context: "离小组汇报只剩十分钟。靠窗两组还没整理记录，另一组已经开始讨论周末安排；你刚提醒过一次，音量很快又升了起来。",
+        dialogueTitle: "小组活动 · 汇报前十分钟",
+        dialogue: [
+          { speaker: "第三组", role: "student", text: "我们还没想好谁来讲，记录也不知道要写到什么程度。" },
+          { speaker: "第四组", role: "student", text: "老师，我们做完了，但不确定是不是要把每个人的意见都写上。" },
+          { speaker: "第三组组员", role: "student", text: "要不先随便找一个人讲？反正时间快到了。" }
+        ],
         options: [
           { text: "用约定的信号先让大家安静，再重申剩余时间和任务目标。", feedback: "稳定、明确的信号能帮助课堂回到共同节奏，也让时间边界更清楚。", scores: [1, 1, 2, 1, 2] },
           { text: "走到偏离任务的小组旁，了解他们卡在哪里，并帮忙重新分工。", feedback: "靠近观察并处理具体障碍，可能比提高音量更快让小组重新投入。", scores: [1, 2, 1, 2, 1] },
@@ -396,7 +450,13 @@
       {
         title: "备课内容比预想中更难理解",
         icon: "🧩",
-        context: "你原计划按教案推进，但从学生的表情和回答看，关键概念似乎没有被理解。按原节奏继续可能会让更多人跟不上。",
+        context: "这节课的关键概念比预想中难讲。你刚演示完例题，教室里安静了几秒，举手回答的人比平时少。",
+        dialogueTitle: "课堂 · 例题讲解后",
+        dialogue: [
+          { speaker: "你", role: "self", text: "这一步为什么要先把条件列出来？谁愿意说说自己的理解？" },
+          { speaker: "小周", role: "student", text: "我知道要算，但不知道为什么不能直接用刚才那个方法。" },
+          { speaker: "后排同学", role: "student", text: "我也是从这里开始跟不上的。" }
+        ],
         options: [
           { text: "停下来换一个生活中的例子解释，并用简短问题确认大家的理解。", feedback: "根据反馈调整讲解方式，是把学生的理解情况纳入课堂决策。", scores: [2, 1, 1, 2, 1] },
           { text: "先完成今天的核心内容，把这个难点标记下来，下一课再复习。", feedback: "你关注课程整体安排；也可以考虑用一个快速检查判断是否适合继续推进。", scores: [1, 1, 2, 1, 2] },
@@ -406,23 +466,73 @@
       {
         title: "家长对一次课堂处理有不同看法",
         icon: "🤝",
-        context: "放学后，一位家长发消息认为你在课堂上对孩子的提醒太严厉，希望你解释当时的情况。你还需要准备明天的课程。",
+        context: "晚上 20:38，八年级（3）班家长群里出现了几条新消息。你还没核对课堂记录，明天的课件也只准备了一半。",
+        dialogueTitle: "八年级（3）班家长群 · 20:38",
+        dialogue: [
+          { speaker: "王同学妈妈", role: "parent", time: "20:38", text: "老师，孩子说今天被当着全班提醒了，回家后一直不太开心。方便说一下当时发生什么了吗？" },
+          { speaker: "李同学爸爸", role: "parent", time: "20:41", text: "我家孩子也说那会儿有点乱，是不是有好几个人没完成任务？" }
+        ],
         options: [
-          { text: "先回应会认真了解，约一个双方方便的时间完整沟通具体经过。", feedback: "先建立沟通窗口、再核对事实，有利于避免在信息不完整时仓促判断。", scores: [2, 1, 1, 1, 2] },
-          { text: "尽快简要说明当时的课堂情况，也询问家长观察到的孩子状态。", feedback: "及时而双向的沟通能让双方视角都被听见，也为后续协作打开空间。", scores: [2, 2, 1, 1, 1] },
-          { text: "先整理课堂记录和处理依据，准备好后再回复并提出具体沟通方案。", feedback: "先整理信息有助于沟通更清晰；可以同时留意回应时效与对方的感受。", scores: [1, 1, 1, 1, 2] }
+          { text: "先在群里回应会了解情况，不展开讨论个别学生的表现，再私下约王同学妈妈沟通。", feedback: "先稳住群内沟通边界，再把个别情况转到私下核实，兼顾了回应时效与学生隐私。", scores: [2, 1, 1, 1, 2] },
+          { text: "先核对课堂记录和当天通知，再在群里说明面向全班的提醒原因，并私下询问孩子的感受。", feedback: "你先补充事实再回应，也为家校双方继续交换信息留出了空间。", scores: [2, 2, 1, 1, 1] },
+          { text: "先把当时的课堂记录整理好，告诉家长稍后私聊，约一个双方方便的时间完整沟通。", feedback: "整理信息能让后续沟通更准确；也可以留意家长此刻需要一个及时的回应。", scores: [1, 1, 1, 1, 2] }
         ]
       },
       {
         title: "临时通知下周要组织一次主题活动",
         icon: "🗂️",
-        context: "学校希望各班围绕“阅读”做一场短活动。时间、场地和学生分工都还没有确定，而本周你已有几项教学任务要完成。",
+        context: "年级组临时通知：下周五班会留出十五分钟，各班做一次阅读主题活动，周三前要交活动安排。本周你还有两份作业要批改。",
+        dialogueTitle: "下课后 · 班级教室",
+        dialogue: [
+          { speaker: "年级组通知", role: "colleague", time: "16:20", text: "活动不用做得很复杂，但周三前要报流程、材料和学生分工。" },
+          { speaker: "小组长", role: "student", time: "16:24", text: "老师，我们能不能做旧书交换？我可以先问问大家带什么书。" },
+          { speaker: "另一位同学", role: "student", time: "16:25", text: "那要在哪里换？班会只有十五分钟，会不会来不及？" }
+        ],
         options: [
           { text: "列出活动目标和必须完成的事项，先定时间节点，再逐步安排分工。", feedback: "把模糊任务拆解并设定节点，能降低临近活动时手忙脚乱的可能。", scores: [1, 1, 1, 1, 2] },
           { text: "先和学生聊聊他们想怎么参与，从一个容易落地的小点子开始。", feedback: "邀请学生共同设计能增加参与感，也可以再补上时间与责任人的安排。", scores: [2, 2, 1, 2, 1] },
           { text: "先确认场地、时长和可用资源，再选一个与条件匹配的活动形式。", feedback: "先弄清资源边界再做方案，体现了务实的统筹思路。", scores: [1, 1, 1, 2, 2] }
         ]
       }
+    ];
+
+    const teacherOutcomes = [
+      [
+        "小林点点头，重新看向课本：“那我从这个动作说。”旁边的同学也开始补充自己的理解。",
+        "小林收好本子：“那我下课来找您。”讨论继续了，你还要记得兑现这个约定。",
+        "几位同学把关键词写在黑板上，小林顺着其中一个词重新组织了答案。",
+        "小林把手放下，讨论继续了；他的想法暂时没有被接住，课后可以再找机会听听。"
+      ],
+      [
+        "他挑了一道题重新开始，写出第一步后说：“我好像把题目里的条件看漏了。”",
+        "他答应放学后补完作业，但本子上仍有两道题空着，具体卡点还需要了解。",
+        "你们一起拆出第一步，他开始动笔了；情绪缓下来一些，剩下的任务还要继续跟进。",
+        "他把本子收起来准备之后再做，眼下的困难还没有被具体说清。"
+      ],
+      [
+        "大家听到约定的信号先停下来，剩余时间和任务重新被说清楚。",
+        "第三组发现卡在分工上，重新安排了记录和汇报；其他小组也开始核对进度。",
+        "一组先分享半成品，大家看到需要完成的样子，讨论逐渐回到任务上。",
+        "几组开始赶进度，但汇报人和记录内容仍没确定，结束前可能还要再协调。"
+      ],
+      [
+        "你换成生活中的例子，几名学生重新抬起头；随后的检查题显示还有人没完全掌握。",
+        "课程按时讲完，课后有学生把没懂的步骤记下来，下一课仍要安排回看。",
+        "学生说清是代入条件时卡住，你从这一步重新演示，找到了大家共同的难点。",
+        "教案按计划推进了，但举手的人仍不多；哪些地方没听懂还需要进一步确认。"
+      ],
+      [
+        "你在群里简短回应会先核实，个别情况私下沟通，随后给王同学妈妈发起私聊。",
+        "你核对记录后在群里说明了面向全班的提醒原因，也私下询问了孩子回家的状态。",
+        "王同学妈妈回：“好的，等您联系。”你可以先核对记录，再约好私聊时间。",
+        "王同学妈妈回了“明白，谢谢”，但孩子的感受和当时经过还需要进一步核实。"
+      ],
+      [
+        "你把十五分钟拆成选书、交换和收尾，定下由谁汇总报名、谁准备桌牌。",
+        "小组长开始统计想带来的书，但场地、秩序和时间还没定，方案需要补上细节。",
+        "你确认教室空间和班会时长后，把活动缩小为“每人推荐一本书”，更容易落地。",
+        "你先按熟悉的活动分了工，学生问书要摆在哪里时，才发现还没确认场地。"
+      ]
     ];
 
     const careers = [
@@ -651,7 +761,7 @@
         "先用自己熟悉的方式把活动推进下去，再观察学生后续的反应。",
         "先提醒大家照常完成任务，等出现更多反馈后再调整做法。",
         "先照原教案把内容讲完，课后再准备更容易理解的例子。",
-        "先说明自己的处理考虑，之后再听家长补充具体担忧。",
+        "先在群里简要说明当时提醒的原因，不提孩子姓名，之后再私聊核实情况。",
         "先选自己熟悉的活动方案，细化分工和时间之后再说。"
       ],
       healthcare: [
@@ -684,7 +794,14 @@
       ]
     };
     const cautionFeedback = {
-      teacher: "熟悉的做法有时能让课堂顺利推进，但可能少听到学生的真实想法；之后可以补一次确认。",
+      teacher: [
+        "先维持讨论节奏，可能让全班更快回到问题；小林的想法还没被听见，课后可以补一次交流。",
+        "按熟悉步骤把任务推进了，但他刚才提到“怎么学都学不会”；之后可以再确认他具体卡在哪里。",
+        "活动继续往前走了，但第三组还没决定汇报人；下一步可以确认责任人和完成时间。",
+        "按教案推进能保证进度，但几位学生已经明确说跟不上；可以留意是否需要快速检查理解。",
+        "你及时给出了回应，但在群里先解释可能让家长觉得事情已经定性；可以再核实经过，并私下听听孩子的感受。",
+        "先选熟悉的方案有助于启动，但书籍交换的空间、时间和分工还没确认，后续可能需要再调整。"
+      ],
       healthcare: "常规做法有助于保持流程连贯，也记得按规范及时核实信息、确认个体需求并寻求协作。",
       product: "先推进能节省讨论时间，但可能漏掉需求背景；可以用后续反馈及时校准。",
       engineer: "熟悉的路径能快速启动，仍要记得补足必要验证、测试或协作同步。",
@@ -692,13 +809,16 @@
     };
     careers.forEach(career => {
       career.scenarios.forEach((scenario, scenarioIndex) => {
+        const outcomes = career.id === "teacher" ? teacherOutcomes[scenarioIndex] : null;
+        if (outcomes) scenario.options.forEach((option, optionIndex) => { option.outcome = outcomes[optionIndex]; });
         const scores = career.dimensions.map((_, dimensionIndex) => {
           const average = scenario.options.reduce((sum, option) => sum + option.scores[dimensionIndex], 0) / scenario.options.length;
           return Math.round(average * 2) / 2;
         });
         scenario.options.push({
           text: cautionChoices[career.id][scenarioIndex],
-          feedback: cautionFeedback[career.id],
+          feedback: Array.isArray(cautionFeedback[career.id]) ? cautionFeedback[career.id][scenarioIndex] : cautionFeedback[career.id],
+          outcome: outcomes ? outcomes[3] : undefined,
           scores
         });
       });
@@ -794,6 +914,7 @@
       document.getElementById("scenario-title").textContent = scenario.title;
       document.getElementById("scenario-icon").textContent = scenario.icon;
       document.getElementById("scenario-context").textContent = scenario.context;
+      renderDialogue(scenario);
       const options = document.getElementById("options");
       options.replaceChildren();
       scenario.options.forEach((option, optionIndex) => {
@@ -809,7 +930,7 @@
       const saved = answers[index];
       const feedback = document.getElementById("feedback");
       feedback.hidden = saved === null;
-      if (saved !== null) document.getElementById("feedback-text").textContent = scenario.options[saved].feedback;
+      if (saved !== null) showChoiceFeedback(scenario.options[saved]);
       document.getElementById("back-button").disabled = index === 0;
       document.getElementById("back-button").style.visibility = index === 0 ? "hidden" : "visible";
       const next = document.getElementById("next-button");
@@ -817,6 +938,46 @@
       next.innerHTML = index === activeCareer.scenarios.length - 1
         ? "结束今天的体验 <span aria-hidden=\"true\">→</span>"
         : "继续进入下一幕 <span aria-hidden=\"true\">→</span>";
+    }
+
+    function showChoiceFeedback(option) {
+      const heading = document.getElementById("feedback-heading");
+      const outcome = document.getElementById("feedback-outcome");
+      heading.textContent = option.outcome ? "可能的现场回响" : "这一选择可能带来的回应";
+      outcome.hidden = !option.outcome;
+      outcome.textContent = option.outcome || "";
+      document.getElementById("feedback-text").textContent = option.feedback;
+      document.getElementById("feedback").hidden = false;
+    }
+
+    function renderDialogue(scenario) {
+      const panel = document.getElementById("scenario-dialogue");
+      const list = document.getElementById("dialogue-list");
+      const entries = scenario.dialogue || [];
+      list.replaceChildren();
+      panel.hidden = entries.length === 0;
+      if (!entries.length) return;
+      document.getElementById("dialogue-heading").textContent = scenario.dialogueTitle || "现场对话";
+      entries.forEach(entry => {
+        const row = document.createElement("div");
+        row.className = `dialogue-row role-${entry.role || "other"}${entry.role === "self" ? " from-self" : ""}`;
+        const meta = document.createElement("div");
+        meta.className = "dialogue-meta";
+        const speaker = document.createElement("span");
+        speaker.className = "dialogue-speaker";
+        speaker.textContent = entry.speaker;
+        meta.append(speaker);
+        if (entry.time) {
+          const time = document.createElement("span");
+          time.textContent = entry.time;
+          meta.append(time);
+        }
+        const bubble = document.createElement("div");
+        bubble.className = "dialogue-bubble";
+        bubble.textContent = entry.text;
+        row.append(meta, bubble);
+        list.append(row);
+      });
     }
 
     function selectOption(optionIndex) {
@@ -827,8 +988,7 @@
         button.classList.toggle("selected", selected);
         button.setAttribute("aria-pressed", String(selected));
       });
-      document.getElementById("feedback-text").textContent = scenario.options[optionIndex].feedback;
-      document.getElementById("feedback").hidden = false;
+      showChoiceFeedback(scenario.options[optionIndex]);
       document.getElementById("next-button").disabled = false;
     }
 
@@ -905,12 +1065,32 @@
         const title = document.createElement("h3");
         title.textContent = `${String(scenarioIndex + 1).padStart(2, "0")} · ${scenario.title}`;
         entry.append(title);
+        if (scenario.dialogue && scenario.dialogue.length) {
+          const transcript = document.createElement("div");
+          transcript.className = "story-log-dialogue";
+          const transcriptTitle = document.createElement("p");
+          transcriptTitle.className = "story-log-dialogue-title";
+          transcriptTitle.textContent = scenario.dialogueTitle || "现场对话";
+          transcript.append(transcriptTitle);
+          scenario.dialogue.forEach(message => {
+            const line = document.createElement("p");
+            line.textContent = `${message.speaker}${message.time ? ` · ${message.time}` : ""}：${message.text}`;
+            transcript.append(line);
+          });
+          entry.append(transcript);
+        }
         const answerIndex = answers[scenarioIndex];
         const choice = document.createElement("p");
         choice.className = `story-log-choice${answerIndex === null ? " pending" : ""}`;
         choice.textContent = answerIndex === null ? "尚未选择" : `你的选择：${scenario.options[answerIndex].text}`;
         entry.append(choice);
         if (answerIndex !== null) {
+          if (scenario.options[answerIndex].outcome) {
+            const outcome = document.createElement("p");
+            outcome.className = "story-log-outcome";
+            outcome.textContent = `可能的现场回响：${scenario.options[answerIndex].outcome}`;
+            entry.append(outcome);
+          }
           const feedback = document.createElement("p");
           feedback.className = "story-log-feedback";
           feedback.textContent = scenario.options[answerIndex].feedback;
