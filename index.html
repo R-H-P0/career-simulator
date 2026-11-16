@@ -97,6 +97,7 @@
     .secondary:hover { background: #f4f5ef; }
     button:focus-visible { outline: 3px solid rgba(229, 154, 91, .7); outline-offset: 3px; }
     .scenario-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 19px; }
+    .scenario-tools { display: flex; align-items: center; gap: 14px; }
     .scenario-count { color: var(--green); font-size: 12px; font-weight: 750; letter-spacing: .06em; }
     .time-label { color: var(--muted); font-size: 12px; }
     .progress-track { height: 5px; margin: 0 0 24px; overflow: hidden; border-radius: 10px; background: #edf0e9; }
@@ -168,6 +169,8 @@
       .career-card { padding: 11px 12px; }
       .scenario-title, .welcome h2, .result-title { font-size: 23px; }
       .scenario-context { margin: 15px 0 17px; padding: 13px; }
+      .scenario-tools { gap: 6px; }
+      .scenario-tools .time-label { display: none; }
       .option { padding: 12px; grid-template-columns: 25px minmax(0, 1fr) 14px; gap: 8px; }
       .option-text { font-size: 12px; }
       .score-row { grid-template-columns: 100px minmax(0, 1fr) 27px; gap: 7px; }
@@ -224,7 +227,10 @@
           <div id="scenario-screen" hidden>
             <div class="scenario-head">
               <span class="scenario-count" id="scenario-count"></span>
-              <span class="time-label">约 2 分钟 · 没有标准答案</span>
+              <div class="scenario-tools">
+                <span class="time-label">约 2 分钟 · 没有标准答案</span>
+                <button class="text-button" id="home-button" type="button">⌂ 返回主页</button>
+              </div>
             </div>
             <div class="progress-track" role="progressbar" aria-label="情境进度" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="progress-bar">
               <div class="progress-fill" id="progress-fill"></div>
@@ -510,8 +516,12 @@
       }
     ];
 
+    const careerProgress = new Map(careers.map(career => [
+      career.id,
+      { answers: Array(career.scenarios.length).fill(null), currentIndex: 0 }
+    ]));
     let activeCareer = careers[0];
-    let answers = Array(activeCareer.scenarios.length).fill(null);
+    let answers = careerProgress.get(activeCareer.id).answers;
     let currentIndex = 0;
     const welcome = document.getElementById("welcome");
     const scenarioScreen = document.getElementById("scenario-screen");
@@ -532,8 +542,9 @@
 
     function selectCareer(career) {
       activeCareer = career;
-      answers = Array(career.scenarios.length).fill(null);
-      showScenario(0);
+      const progress = careerProgress.get(career.id);
+      answers = progress.answers;
+      showScenario(progress.currentIndex);
     }
 
     function updateJourney(activeStep) {
@@ -547,6 +558,7 @@
 
     function showScenario(index) {
       currentIndex = index;
+      careerProgress.get(activeCareer.id).currentIndex = index;
       const scenario = activeCareer.scenarios[index];
       welcome.hidden = true;
       resultsScreen.hidden = true;
@@ -647,12 +659,15 @@
     }
 
     function restart() {
-      selectCareer(activeCareer);
+      const progress = careerProgress.get(activeCareer.id);
+      progress.answers = Array(activeCareer.scenarios.length).fill(null);
+      progress.currentIndex = 0;
+      answers = progress.answers;
+      showScenario(0);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function showCareerPicker() {
-      answers = Array(activeCareer.scenarios.length).fill(null);
       welcome.hidden = false;
       scenarioScreen.hidden = true;
       resultsScreen.hidden = true;
@@ -661,6 +676,7 @@
     }
 
     document.getElementById("back-button").addEventListener("click", () => showScenario(currentIndex - 1));
+    document.getElementById("home-button").addEventListener("click", showCareerPicker);
     document.getElementById("next-button").addEventListener("click", () => {
       if (currentIndex < activeCareer.scenarios.length - 1) showScenario(currentIndex + 1);
       else makeResults();
