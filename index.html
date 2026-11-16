@@ -714,14 +714,35 @@
         const selectedScores = answers.flatMap((optionIndex, scenarioIndex) => (
           optionIndex === null ? [] : [activeCareer.scenarios[scenarioIndex].options[optionIndex].scores[dimensionIndex]]
         ));
-        const average = selectedScores.reduce((sum, score) => sum + score, 0) / selectedScores.length;
-        const value = Math.max(0, Math.min(100, Math.round(60 + (average - 1) * 30)));
+        
+        // 算出一个 1 到 2 之间的平均分
+        const average = selectedScores.length 
+          ? selectedScores.reduce((sum, score) => sum + score, 0) / selectedScores.length 
+          : 1.5;
+
+        // 【核心修改】60分基准线，上下加减：
+        // 如果平均分是1，得分为 60 + (1 - 1.5) * 40 = 40分
+        // 如果平均分是1.5，得分为 60 + (1.5 - 1.5) * 40 = 60分
+        // 如果平均分是2，得分为 60 + (2 - 1.5) * 40 = 80分
+        // 我们换个更平滑的公式：把区间拉大一点，保底 50分，上限 95分
+        // 使用：55 + (average - 1) * 40 
+        // 平均1分 -> 55分；平均1.5分 -> 75分；平均2分 -> 95分
+        
+        const value = Math.max(0, Math.min(100, Math.round(55 + (average - 1) * 40)));
+        
         return { ...dimension, value };
       });
+
+      // 后面的代码保持不变，用来提取优势和挑战项
       const sorted = [...totals].sort((a, b) => b.value - a.value);
-      const high = sorted.filter(item => item.value >= 56);
-      const low = [...sorted].reverse().filter(item => item.value <= 44);
-      return { totals, strengths: high.length ? high.slice(0, 2) : sorted.slice(0, 1), challenges: low.slice(0, 2) };
+      const high = sorted.filter(item => item.value >= 70); // 因为现在分数普遍高了，可以把优势的标准从56提高到70
+      const low = [...sorted].reverse().filter(item => item.value <= 55); // 挑战标准也相应调整
+      
+      return { 
+        totals, 
+        strengths: high.length ? high.slice(0, 2) : sorted.slice(0, 1), 
+        challenges: low.slice(0, 2) 
+      };
     }
 
     function createRadarChart(totals) {
