@@ -392,11 +392,12 @@
       {
         id: "teacher", name: "教师", icon: "📚", description: "课堂互动、学生成长与教学组织",
         dimensions: teacherDimensions, scenarios: teacherScenarios,
-        onetTitle: "Elementary School Teachers, Except Special Education",
-        onetUrl: "https://www.onetonline.org/link/summary/25-2021.00",
-        scopeNote: "以美国 O*NET 小学教师岗位作参考，未覆盖中学、高校等教师岗位差异。",
-        profileWeights: { communication: 24, empathy: 20, management: 20, adaptability: 18, planning: 18 },
-        scenarioWeights: [1.25, 1.5, 2, 1.5, 1.25, 1.75],
+        references: [
+          { title: "学信网学职平台 · 中学教师", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=j0fd675hgqprjpke" },
+          { title: "教育部《中学教师专业标准（试行）》", url: "https://www.moe.gov.cn/srcsite/A10/s6991/201209/t20120913_145603.html" }
+        ],
+        scopeNote: "以中学教师职业档案和中学教师专业标准为参照；不同学段、学科和学校的实际要求会有差异。",
+        scenarioWeights: [2, 2, 2, 2, 2, 1],
         practices: [
           ["练习倾听与提问", "和同伴做一次 5 分钟倾听练习，只用开放式问题了解对方的想法。"],
           ["练习课堂应变", "为一个常见课堂突发情况，准备“先稳定现场、再了解原因、最后跟进”的简短预案。"],
@@ -405,11 +406,12 @@
       },
       {
         id: "healthcare", name: "医护人员", icon: "🩺", description: "理解需求、细致观察与团队协作",
-        onetTitle: "Registered Nurses",
-        onetUrl: "https://www.onetonline.org/link/summary/29-1141.00",
-        scopeNote: "以美国 O*NET 注册护士岗位作参考，不代表所有医护岗位。",
-        profileWeights: { empathy: 18, communication: 20, detail: 24, adaptability: 20, teamwork: 18 },
-        scenarioWeights: [1.25, 2, 2, 1.5, 1.5],
+        references: [
+          { title: "学信网学职平台 · 护士", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=x4ld42rz8ikh1liv" },
+          { title: "国家卫生健康委《护士条例》", url: "https://www.nhc.gov.cn/fzs/c100048/201808/f10825832c6e4c259af327f055becb3a.shtml" }
+        ],
+        scopeNote: "以护士岗位职责作医疗护理情境参照，不代表医生、药师或所有医疗岗位。",
+        scenarioWeights: [1, 2, 2, 1, 2],
         dimensions: [
           { key: "empathy", name: "关怀与共情" }, { key: "communication", name: "沟通表达" },
           { key: "detail", name: "细致观察" }, { key: "adaptability", name: "临场应变" }, { key: "teamwork", name: "团队协作" }
@@ -454,11 +456,11 @@
       },
       {
         id: "product", name: "产品经理", icon: "🧭", description: "理解用户、判断优先级与推动协作",
-        onetTitle: "Project Management Specialists（近似岗位）",
-        onetUrl: "https://www.onetonline.org/link/summary/13-1082.00",
-        scopeNote: "O*NET 没有完全对应的产品经理类别，此处用项目管理专员作近似参考，产品情境另作映射。",
-        profileWeights: { user: 21, communication: 21, priority: 24, collaboration: 19, analysis: 15 },
-        scenarioWeights: [1.5, 1.75, 2, 1.75, 1.75],
+        references: [
+          { title: "学信网学职平台 · 互联网产品经理", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=38p5qcxjcsyjl64r" }
+        ],
+        scopeNote: "采用互联网产品经理职业档案；金融、硬件及其他行业的产品岗位可能有不同职责。",
+        scenarioWeights: [2, 2, 2, 1, 2],
         dimensions: [
           { key: "user", name: "用户理解" }, { key: "communication", name: "沟通表达" },
           { key: "priority", name: "优先级判断" }, { key: "collaboration", name: "协作推动" }, { key: "analysis", name: "分析思考" }
@@ -503,11 +505,11 @@
       },
       {
         id: "engineer", name: "软件工程师", icon: "💻", description: "拆解问题、保证质量与团队共建",
-        onetTitle: "Software Developers",
-        onetUrl: "https://www.onetonline.org/link/summary/15-1252.00",
-        scopeNote: "以美国 O*NET 软件开发人员岗位作参考。",
-        profileWeights: { analysis: 28, detail: 25, collaboration: 16, planning: 17, adaptability: 14 },
-        scenarioWeights: [2, 1.75, 1.75, 2, 1.5],
+        references: [
+          { title: "学信网学职平台 · 计算机软件工程师", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=r3ulul3d64sl5sk4" }
+        ],
+        scopeNote: "采用计算机软件工程师职业档案；不同技术栈、行业和职级的工作侧重点会有差异。",
+        scenarioWeights: [2, 1, 1, 2, 1],
         dimensions: [
           { key: "analysis", name: "逻辑分析" }, { key: "detail", name: "细节与质量" },
           { key: "collaboration", name: "团队协作" }, { key: "planning", name: "任务规划" }, { key: "adaptability", name: "灵活应变" }
@@ -552,11 +554,11 @@
       },
       {
         id: "designer", name: "视觉设计师", icon: "🎨", description: "理解受众、探索创意与打磨呈现",
-        onetTitle: "Graphic Designers（近似岗位）",
-        onetUrl: "https://www.onetonline.org/link/summary/27-1024.00",
-        scopeNote: "以美国 O*NET 平面设计师岗位作近似参考，UI/UX 与视觉设计岗位要求可能不同。",
-        profileWeights: { user: 18, creativity: 28, communication: 17, iteration: 21, planning: 16 },
-        scenarioWeights: [1.5, 1.75, 1.5, 2, 1.75],
+        references: [
+          { title: "学信网学职平台 · 用户界面（UI）设计师", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=qrnpx30r02ekosop" }
+        ],
+        scopeNote: "以用户界面（UI）设计师职业档案作近似参照；品牌、平面、动效等视觉设计岗位要求会有差异。",
+        scenarioWeights: [2, 2, 2, 1, 1],
         dimensions: [
           { key: "user", name: "受众理解" }, { key: "creativity", name: "创意探索" },
           { key: "communication", name: "表达呈现" }, { key: "iteration", name: "迭代适应" }, { key: "planning", name: "规划执行" }
@@ -650,7 +652,7 @@
       career.scenarios.forEach((scenario, scenarioIndex) => {
         const scores = career.dimensions.map((_, dimensionIndex) => {
           const average = scenario.options.reduce((sum, option) => sum + option.scores[dimensionIndex], 0) / scenario.options.length;
-          return average;
+          return Math.round(average * 2) / 2;
         });
         scenario.options.push({
           text: cautionChoices[career.id][scenarioIndex],
@@ -762,7 +764,7 @@
         });
         const totalWeight = selectedScores.reduce((sum, item) => sum + item.weight, 0);
         const average = selectedScores.reduce((sum, item) => sum + item.score * item.weight, 0) / totalWeight;
-        const value = Math.max(0, Math.min(100, Math.round(50 + (average - 1.5) * 50)));
+        const value = Math.max(0, Math.min(100, Math.round((average - 1) * 100)));
         return { ...dimension, value };
       });
       const sorted = [...totals].sort((a, b) => b.value - a.value);
@@ -772,15 +774,10 @@
     }
 
     function getCareerMatch(totals) {
-      const dimensions = totals.map(dimension => ({
-        ...dimension,
-        weight: activeCareer.profileWeights[dimension.key]
-      })).sort((a, b) => b.weight - a.weight);
-      const totalWeight = dimensions.reduce((sum, dimension) => sum + dimension.weight, 0);
-      const weightedScore = dimensions.reduce((sum, dimension) => sum + dimension.value * dimension.weight, 0) / totalWeight;
+      const score = totals.reduce((sum, dimension) => sum + dimension.value, 0) / totals.length;
       return {
-        score: Math.max(0, Math.min(100, Math.round((weightedScore - 25) * 2))),
-        dimensions
+        score: Math.max(0, Math.min(100, Math.round(score))),
+        dimensions: [...totals]
       };
     }
 
@@ -877,7 +874,7 @@
           <section class="result-insights">
             <h3 class="panel-title">本次选择观察</h3>
             <p class="result-lead">${leadText}</p>
-            <p class="score-legend">维度图仅在完成答题后生成，归纳你所选做法呈现的倾向；数值不是能力百分比。</p>
+            <p class="score-legend">完成答题后汇总行为线索：1 / 1.5 / 2 分对应 0 / 50 / 100；数值只表示本次选择，不是能力百分比。</p>
             <div class="dimension-list">
               ${totals.map(item => {
                 const note = item.value >= 56 ? "相关应对方式较常出现" : item.value <= 44 ? "相关应对方式较少出现" : "选择分布相对均衡";
@@ -890,16 +887,16 @@
           <div class="fit-heading">
             <div>
               <h3 class="panel-title" id="fit-title">岗位匹配度参考</h3>
-              <p class="fit-summary">将本次情境选择与岗位重点维度作加权对照，仅用于自我探索，不是录用概率或正式测评结果。</p>
+              <p class="fit-summary">按岗位任务关联程度汇总情境选择，并对该职业的五项观察维度等权计算，仅用于自我探索。</p>
             </div>
             <div class="fit-score" aria-label="岗位匹配度参考 ${careerMatch.score} 分"><strong>${careerMatch.score}</strong><span>/ 100</span></div>
           </div>
           <div class="fit-track" role="img" aria-label="匹配度参考 ${careerMatch.score} 分"><span style="width:${careerMatch.score}%"></span></div>
           <div class="fit-dimensions">
-            ${careerMatch.dimensions.map(item => `<div class="fit-dimension"><span class="fit-dimension-name">${item.name}</span><span class="fit-dimension-meta">岗位参考权重 ${item.weight}% · 本次 ${item.value}</span></div>`).join("")}
+            ${careerMatch.dimensions.map(item => `<div class="fit-dimension"><span class="fit-dimension-name">${item.name}</span><span class="fit-dimension-meta">本次行为线索 ${item.value}/100</span></div>`).join("")}
           </div>
-          <p class="fit-source">资料参考：<a href="${activeCareer.onetUrl}" target="_blank" rel="noopener noreferrer">O*NET OnLine · ${activeCareer.onetTitle}</a>。${activeCareer.scopeNote}</p>
-          <p class="fit-method">计算说明：岗位维度权重与情境题权重是本原型根据 O*NET 技能、能力及工作活动描述进行的人工映射（每题 1–2 倍）；匹配度由加权情境得分换算，并非 O*NET 官方匹配分。数据基于美国职业资料，不能直接代表中国地区岗位要求。</p>
+          <p class="fit-source">国内资料参考：${activeCareer.references.map(reference => `<a href="${reference.url}" target="_blank" rel="noopener noreferrer">${reference.title}</a>`).join(" · ")}。${activeCareer.scopeNote}</p>
+          <p class="fit-method">计分说明：1 / 1.5 / 2 分分别表示该选项在本情境中较少、部分或较充分体现某项行为线索；题目按与岗位职责的关联分为 1×（相关情境）和 2×（直接对应核心职责）。来源未提供可直接比较的维度权重，因此五个维度等权。该原型的映射和分数尚未经过代表性样本的信效度验证，不是能力百分比、职业合格线或就业概率。</p>
         </section>
         <div class="report-grid">
           <section class="report-panel"><h3 class="panel-title">可能的优势线索</h3>${strengthText}</section>
