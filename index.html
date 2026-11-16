@@ -719,7 +719,6 @@
           { title: "教育部《中学教师专业标准（试行）》", url: "https://www.moe.gov.cn/srcsite/A10/s6991/201209/t20120913_145603.html" }
         ],
         scopeNote: "以中学教师职业档案和中学教师专业标准为参照；不同学段、学科和学校的实际要求会有差异。",
-        scenarioWeights: [2, 2, 2, 2, 2, 1],
         practices: [
           ["练习倾听与提问", "和同伴做一次 5 分钟倾听练习，只用开放式问题了解对方的想法。"],
           ["练习课堂应变", "为一个常见课堂突发情况，准备“先稳定现场、再了解原因、最后跟进”的简短预案。"],
@@ -734,7 +733,6 @@
           { title: "国家卫生健康委《护士条例》", url: "https://www.nhc.gov.cn/fzs/c100048/201808/f10825832c6e4c259af327f055becb3a.shtml" }
         ],
         scopeNote: "以护士岗位职责作医疗护理情境参照，不代表医生、药师或所有医疗岗位。",
-        scenarioWeights: [1, 2, 2, 1, 2],
         dimensions: [
           { key: "empathy", name: "关怀与共情" }, { key: "communication", name: "沟通表达" },
           { key: "detail", name: "细致观察" }, { key: "adaptability", name: "临场应变" }, { key: "teamwork", name: "团队协作" }
@@ -814,7 +812,6 @@
           { title: "学信网学职平台 · 互联网产品经理", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=38p5qcxjcsyjl64r" }
         ],
         scopeNote: "采用互联网产品经理职业档案；金融、硬件及其他行业的产品岗位可能有不同职责。",
-        scenarioWeights: [2, 2, 2, 1, 2],
         dimensions: [
           { key: "user", name: "用户理解" }, { key: "communication", name: "沟通表达" },
           { key: "priority", name: "优先级判断" }, { key: "collaboration", name: "协作推动" }, { key: "analysis", name: "分析思考" }
@@ -894,7 +891,6 @@
           { title: "学信网学职平台 · 计算机软件工程师", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=r3ulul3d64sl5sk4" }
         ],
         scopeNote: "采用计算机软件工程师职业档案；不同技术栈、行业和职级的工作侧重点会有差异。",
-        scenarioWeights: [2, 1, 1, 2, 1],
         dimensions: [
           { key: "analysis", name: "逻辑分析" }, { key: "detail", name: "细节与质量" },
           { key: "collaboration", name: "团队协作" }, { key: "planning", name: "任务规划" }, { key: "adaptability", name: "灵活应变" }
@@ -974,7 +970,6 @@
           { title: "学信网学职平台 · 用户界面（UI）设计师", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=qrnpx30r02ekosop" }
         ],
         scopeNote: "以用户界面（UI）设计师职业档案作近似参照；品牌、平面、动效等视觉设计岗位要求会有差异。",
-        scenarioWeights: [2, 2, 2, 1, 1],
         dimensions: [
           { key: "user", name: "受众理解" }, { key: "creativity", name: "创意探索" },
           { key: "communication", name: "表达呈现" }, { key: "iteration", name: "迭代适应" }, { key: "planning", name: "规划执行" }
@@ -1333,30 +1328,26 @@
 
     function getObservations() {
       const totals = activeCareer.dimensions.map((dimension, dimensionIndex) => {
-        const selectedScores = answers.flatMap((optionIndex, scenarioIndex) => {
-          if (optionIndex === null) return [];
-          return [{
-            score: activeCareer.scenarios[scenarioIndex].options[optionIndex].scores[dimensionIndex],
-            weight: activeCareer.scenarioWeights[scenarioIndex]
-          }];
+        let selected = 0;
+        let minimum = 0;
+        let maximum = 0;
+        activeCareer.scenarios.forEach((scenario, scenarioIndex) => {
+          const optionIndex = answers[scenarioIndex];
+          if (optionIndex === null) return;
+          const possibleScores = scenario.options.map(option => option.scores[dimensionIndex]);
+          selected += scenario.options[optionIndex].scores[dimensionIndex];
+          minimum += Math.min(...possibleScores);
+          maximum += Math.max(...possibleScores);
         });
-        const totalWeight = selectedScores.reduce((sum, item) => sum + item.weight, 0);
-        const average = selectedScores.reduce((sum, item) => sum + item.score * item.weight, 0) / totalWeight;
-        const value = Math.max(0, Math.min(100, Math.round((average - 1) * 100)));
+        const proportion = maximum === minimum ? 0.5 : (selected - minimum) / (maximum - minimum);
+        const value = Math.round(75 + proportion * 20);
         return { ...dimension, value };
       });
       const sorted = [...totals].sort((a, b) => b.value - a.value);
-      const high = sorted.filter(item => item.value >= 56);
-      const low = [...sorted].reverse().filter(item => item.value <= 44);
-      return { totals, strengths: high.length ? high.slice(0, 2) : sorted.slice(0, 1), challenges: low.slice(0, 2) };
-    }
-
-    function getCareerMatch(totals) {
-      const score = totals.reduce((sum, dimension) => sum + dimension.value, 0) / totals.length;
-      return {
-        score: Math.max(0, Math.min(100, Math.round(score))),
-        dimensions: [...totals]
-      };
+      const high = sorted.filter(item => item.value >= 88);
+      const low = [...sorted].reverse().filter(item => item.value <= 81);
+      const match = Math.round(totals.reduce((sum, item) => sum + item.value, 0) / totals.length);
+      return { totals, match, strengths: high.slice(0, 2), challenges: low.slice(0, 2) };
     }
 
     function createRadarChart(totals) {
@@ -1447,13 +1438,14 @@
     }
 
     function makeResults() {
-      const { totals, strengths, challenges } = getObservations();
-      const careerMatch = getCareerMatch(totals);
+      const { totals, match, strengths, challenges } = getObservations();
       const ordered = [...totals].sort((a, b) => b.value - a.value);
-      const leadText = ordered[0].value >= 56
+      const leadText = ordered[0].value >= 88
         ? `本次情境中，${ordered[0].name}相关的应对方式较常出现。它是一条可以继续观察的线索，不代表固定能力或职业结论。`
         : "不同情境下的选择比较灵活，目前没有特别突出的单一维度；可以继续留意不同环境如何影响你的做法。";
-      const strengthText = strengths.map(item => `<p class="insight"><strong>${item.name}</strong>：这次选择里较常出现相关应对方式，可以观察它在真实合作或工作任务中如何发挥作用。</p>`).join("");
+      const strengthText = strengths.length
+        ? strengths.map(item => `<p class="insight"><strong>${item.name}</strong>：这次选择里较常出现相关应对方式，可以观察它在真实合作或工作任务中如何发挥作用。</p>`).join("")
+        : `<p class="insight">这次没有明显突出的单一维度；可以结合真实经历继续观察自己的做法。</p>`;
       const challengeText = challenges.length
         ? challenges.map(item => `<p class="insight"><strong>${item.name}</strong>：这次较少选择相关做法，不代表你不擅长；也可以看看情境条件是否影响了你的判断。</p>`).join("")
         : `<p class="insight">各维度的选择分布比较均衡。不同情境可能会让你采用不同策略，不必急着把自己归入某一种类型。</p>`;
@@ -1472,10 +1464,10 @@
           <section class="result-insights">
             <h3 class="panel-title">本次选择观察</h3>
             <p class="result-lead">${leadText}</p>
-            <p class="score-legend">完成答题后汇总行为线索：1 / 1.5 / 2 分对应 0 / 50 / 100；数值只表示本次选择，不是能力百分比。</p>
+            <p class="score-legend">维度分数根据已答情境中所选做法相对于可选范围归一化至 75–95；岗位匹配度为五个维度分数的等权平均。分数仅用于本次情境观察，不是能力百分比。</p>
             <div class="dimension-list">
               ${totals.map(item => {
-                const note = item.value >= 56 ? "相关应对方式较常出现" : item.value <= 44 ? "相关应对方式较少出现" : "选择分布相对均衡";
+                const note = item.value >= 88 ? "相关应对方式较常出现" : item.value <= 81 ? "相关应对方式较少出现" : "选择分布相对均衡";
                 return `<div class="dimension-item"><span class="dimension-name">${item.name}</span><span class="score-track"><span class="score-fill" style="display:block;width:${item.value}%"></span></span><span class="score-value">${item.value}</span><span class="dimension-note">${note}</span></div>`;
               }).join("")}
             </div>
@@ -1485,16 +1477,16 @@
           <div class="fit-heading">
             <div>
               <h3 class="panel-title" id="fit-title">岗位匹配度参考</h3>
-              <p class="fit-summary">按岗位任务关联程度汇总情境选择，并对该职业的五项观察维度等权计算，仅用于自我探索。</p>
+              <p class="fit-summary">将五项维度分数等权平均作为岗位匹配度参考，仅反映本次情境选择，用于自我探索。</p>
             </div>
-            <div class="fit-score" aria-label="岗位匹配度参考 ${careerMatch.score} 分"><strong>${careerMatch.score}</strong><span>/ 100</span></div>
+            <div class="fit-score" aria-label="岗位匹配度参考 ${match} 分"><strong>${match}</strong><span>/ 100</span></div>
           </div>
-          <div class="fit-track" role="img" aria-label="匹配度参考 ${careerMatch.score} 分"><span style="width:${careerMatch.score}%"></span></div>
+          <div class="fit-track" role="img" aria-label="匹配度参考 ${match} 分"><span style="width:${match}%"></span></div>
           <div class="fit-dimensions">
-            ${careerMatch.dimensions.map(item => `<div class="fit-dimension"><span class="fit-dimension-name">${item.name}</span><span class="fit-dimension-meta">本次行为线索 ${item.value}/100</span></div>`).join("")}
+            ${totals.map(item => `<div class="fit-dimension"><span class="fit-dimension-name">${item.name}</span><span class="fit-dimension-meta">本次行为线索 ${item.value}/100</span></div>`).join("")}
           </div>
           <p class="fit-source">国内资料参考：${activeCareer.references.map(reference => `<a href="${reference.url}" target="_blank" rel="noopener noreferrer">${reference.title}</a>`).join(" · ")}。${activeCareer.scopeNote}</p>
-          <p class="fit-method">计分说明：1 / 1.5 / 2 分分别表示该选项在本情境中较少、部分或较充分体现某项行为线索；题目按与岗位职责的关联分为 1×（相关情境）和 2×（直接对应核心职责）。来源未提供可直接比较的维度权重，因此五个维度等权。该原型的映射和分数尚未经过代表性样本的信效度验证，不是能力百分比、职业合格线或就业概率。</p>
+          <p class="fit-method">计分说明：每个维度先累计已答情境中所选做法的分数，并与这些情境中各自可选做法的最低分和最高分比较，再归一化映射到 75–95；岗位匹配度是五个维度分数的等权平均。该原型的映射和分数尚未经过代表性样本的信效度验证，不是能力百分比、职业合格线或就业概率。</p>
         </section>
         <div class="report-grid">
           <section class="report-panel"><h3 class="panel-title">可能的优势线索</h3>${strengthText}</section>
