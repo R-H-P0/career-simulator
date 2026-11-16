@@ -41,7 +41,10 @@
       display: grid; place-items: center; width: 35px; height: 35px; border-radius: 12px;
       color: white; background: var(--green); font-size: 17px;
     }
+    .topbar-actions { display: flex; align-items: center; gap: 16px; }
     .top-note { color: var(--muted); font-size: 13px; }
+    .home-settings-button { padding: 8px 11px; border: 1px solid var(--line); border-radius: 999px; color: var(--green-dark); background: rgba(255, 254, 250, .85); cursor: pointer; font-size: 11px; font-weight: 700; }
+    .home-settings-button:hover { border-color: #9eb9a8; background: var(--white); }
     main { padding: 38px 0 68px; }
     .intro { max-width: 700px; margin: 0 auto 34px; text-align: center; }
     .eyebrow {
@@ -226,12 +229,27 @@
     .story-log-choice { margin: 0 0 7px; color: #46564d; font-size: 12px; line-height: 1.7; }
     .story-log-choice.pending { color: #929b93; font-style: italic; }
     .story-log-feedback { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
+    .home-settings { width: min(440px, calc(100% - 28px)); padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--white); box-shadow: var(--shadow); }
+    .home-settings::backdrop { background: rgba(28, 39, 33, .42); backdrop-filter: blur(3px); }
+    .home-settings[open] { display: flex; flex-direction: column; }
+    .home-settings-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 22px 24px 16px; border-bottom: 1px solid var(--line); }
+    .home-settings-head h2 { margin: 7px 0 0; font-family: Georgia, "Noto Serif SC", "Songti SC", serif; font-size: 23px; font-weight: 600; }
+    .home-settings-body { display: grid; gap: 14px; padding: 20px 24px 24px; }
+    .music-setting { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .music-setting-copy { display: grid; gap: 5px; }
+    .music-setting-copy strong { font-size: 13px; }
+    .music-setting-copy span { color: var(--muted); font-size: 11px; line-height: 1.65; }
+    .music-setting input { width: 20px; height: 20px; flex: 0 0 auto; accent-color: var(--green); cursor: pointer; }
+    .music-status { min-height: 18px; margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
     [hidden] { display: none !important; }
 
     @media (max-width: 760px) {
       .shell { width: min(100% - 30px, 560px); }
       .topbar { height: 66px; }
       .top-note { font-size: 11px; }
+      .topbar-actions { gap: 0; }
+      .topbar-actions .top-note { display: none; }
+      .home-settings-button { padding: 7px 9px; }
       main { padding: 29px 0 42px; }
       .intro { margin-bottom: 23px; }
       .intro p { font-size: 13px; }
@@ -279,7 +297,10 @@
   <div class="shell">
     <header class="topbar">
       <div class="brand"><span class="brand-mark" aria-hidden="true">知</span><span>职业情境体验</span></div>
-      <span class="top-note">探索一种可能，不急着下结论</span>
+      <div class="topbar-actions">
+        <span class="top-note">探索一种可能，不急着下结论</span>
+        <button class="home-settings-button" id="home-settings-button" type="button" aria-haspopup="dialog" aria-controls="home-settings">⚙ 主页设置</button>
+      </div>
     </header>
 
     <main>
@@ -376,6 +397,27 @@
       <p class="footer-note">用好奇心认识自己，也给每一种成长留出空间。</p>
     </main>
   </div>
+
+  <audio id="homepage-music" src="assets/home-ambient.wav" loop preload="auto"></audio>
+  <dialog class="home-settings" id="home-settings" aria-labelledby="home-settings-title">
+    <div class="home-settings-head">
+      <div>
+        <span class="eyebrow">主页偏好</span>
+        <h2 id="home-settings-title">主页设置</h2>
+      </div>
+      <button class="text-button" id="close-home-settings" type="button" aria-label="关闭主页设置">关闭 ×</button>
+    </div>
+    <div class="home-settings-body">
+      <label class="music-setting" for="home-music-toggle">
+        <span class="music-setting-copy">
+          <strong>原创背景音乐</strong>
+          <span>仅在主页和开始前循环播放；进入第一幕测评后自动停止。</span>
+        </span>
+        <input id="home-music-toggle" type="checkbox">
+      </label>
+      <p class="music-status" id="music-status" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
 
   <dialog class="story-log" id="story-log" aria-labelledby="story-log-title">
     <div class="story-log-head">
@@ -1113,6 +1155,22 @@
     const resultsScreen = document.getElementById("results-screen");
     const journeySteps = Array.from(document.querySelectorAll("#journey li"));
     const careerGrid = document.getElementById("career-grid");
+    const homeSettingsButton = document.getElementById("home-settings-button");
+    const homeSettingsDialog = document.getElementById("home-settings");
+    const homeMusicToggle = document.getElementById("home-music-toggle");
+    const musicStatus = document.getElementById("music-status");
+    const homepageMusic = document.getElementById("homepage-music");
+    let homeMusicEnabled = true;
+    let musicPreferenceStorageAvailable = true;
+    try {
+      homeMusicEnabled = localStorage.getItem("career-simulator-home-music") !== "false";
+    } catch (error) {
+      musicPreferenceStorageAvailable = false;
+    }
+    homeMusicToggle.checked = homeMusicEnabled;
+    musicStatus.textContent = musicPreferenceStorageAvailable
+      ? homeMusicEnabled ? "主页背景音乐默认开启，可随时在这里关闭。" : "主页背景音乐已关闭。"
+      : "无法读取已保存的音乐设置，本次暂按默认开启。";
 
     careers.forEach(career => {
       const button = document.createElement("button");
@@ -1134,6 +1192,7 @@
 
     function showCareerIntro(progress) {
       welcome.hidden = true;
+      homeSettingsButton.hidden = true;
       scenarioScreen.hidden = true;
       resultsScreen.hidden = true;
       careerIntroScreen.hidden = false;
@@ -1154,6 +1213,8 @@
     }
 
     function startExperience() {
+      stopHomeMusic();
+      homeSettingsButton.hidden = true;
       const progress = careerProgress.get(activeCareer.id);
       const nextUnanswered = progress.answers.findIndex(answer => answer === null);
       if (nextUnanswered === -1) {
@@ -1177,6 +1238,7 @@
       careerProgress.get(activeCareer.id).currentIndex = index;
       const scenario = activeCareer.scenarios[index];
       welcome.hidden = true;
+      homeSettingsButton.hidden = true;
       careerIntroScreen.hidden = true;
       resultsScreen.hidden = true;
       scenarioScreen.hidden = false;
@@ -1450,6 +1512,7 @@
           </div>
         </div>`;
       resultsScreen.hidden = false;
+      homeSettingsButton.hidden = true;
       careerIntroScreen.hidden = true;
       scenarioScreen.hidden = true;
       updateJourney(2);
@@ -1469,17 +1532,75 @@
 
     function showCareerPicker() {
       welcome.hidden = false;
+      homeSettingsButton.hidden = false;
       careerIntroScreen.hidden = true;
       scenarioScreen.hidden = true;
       resultsScreen.hidden = true;
       updateJourney(0);
       window.scrollTo({ top: 0, behavior: "smooth" });
+      startHomeMusic();
     }
+
+    function startHomeMusic() {
+      if (!homeMusicEnabled || (welcome.hidden && careerIntroScreen.hidden)) return;
+      const playback = homepageMusic.play();
+      if (playback && typeof playback.then === "function") {
+        playback.then(() => {
+          if (homeMusicEnabled && !homepageMusic.paused) musicStatus.textContent = "原创背景音乐正在循环播放。";
+        }).catch(() => {
+          if (homeMusicEnabled && (!welcome.hidden || !careerIntroScreen.hidden)) {
+            musicStatus.textContent = "浏览器限制了自动播放；点击主页一次即可开始，也可在设置中关闭。";
+          }
+        });
+      }
+    }
+
+    function stopHomeMusic() {
+      homepageMusic.pause();
+      homepageMusic.currentTime = 0;
+      musicStatus.textContent = "进入测评后，主页背景音乐已自动停止。";
+    }
+
+    function openHomeSettings() {
+      if (typeof homeSettingsDialog.showModal === "function") homeSettingsDialog.showModal();
+      else homeSettingsDialog.setAttribute("open", "");
+    }
+
+    function closeHomeSettings() {
+      if (typeof homeSettingsDialog.close === "function") homeSettingsDialog.close();
+      else homeSettingsDialog.removeAttribute("open");
+    }
+
+    function updateHomeMusicPreference() {
+      homeMusicEnabled = homeMusicToggle.checked;
+      try {
+        localStorage.setItem("career-simulator-home-music", String(homeMusicEnabled));
+        musicPreferenceStorageAvailable = true;
+      } catch (error) {
+        musicPreferenceStorageAvailable = false;
+      }
+      if (homeMusicEnabled) {
+        startHomeMusic();
+        if (!musicPreferenceStorageAvailable) musicStatus.textContent = "音乐已开启，但浏览器无法保存设置；刷新后可能恢复默认。";
+      } else {
+        stopHomeMusic();
+        musicStatus.textContent = musicPreferenceStorageAvailable
+          ? "主页背景音乐已关闭，设置已保存。"
+          : "主页背景音乐已关闭，但浏览器无法保存设置。";
+      }
+    }
+
+    homepageMusic.addEventListener("error", () => {
+      musicStatus.textContent = "原创背景音乐暂时无法加载，请检查页面资源是否完整。";
+    });
 
     document.getElementById("back-button").addEventListener("click", () => showScenario(currentIndex - 1));
     document.getElementById("home-button").addEventListener("click", showCareerPicker);
     document.getElementById("intro-home-button").addEventListener("click", showCareerPicker);
     document.getElementById("start-experience-button").addEventListener("click", startExperience);
+    homeSettingsButton.addEventListener("click", openHomeSettings);
+    document.getElementById("close-home-settings").addEventListener("click", closeHomeSettings);
+    homeMusicToggle.addEventListener("change", updateHomeMusicPreference);
     document.getElementById("log-button").addEventListener("click", openStoryLog);
     document.getElementById("close-log-button").addEventListener("click", () => {
       const dialog = document.getElementById("story-log");
@@ -1490,6 +1611,13 @@
       if (currentIndex < activeCareer.scenarios.length - 1) showScenario(currentIndex + 1);
       else makeResults();
     });
+    document.addEventListener("pointerdown", () => {
+      if (!welcome.hidden) startHomeMusic();
+    }, { capture: true });
+    document.addEventListener("keydown", () => {
+      if (!welcome.hidden) startHomeMusic();
+    }, { capture: true });
+    startHomeMusic();
   </script>
 </body>
 </html>
