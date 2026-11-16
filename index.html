@@ -1276,6 +1276,7 @@
       next.innerHTML = index === activeCareer.scenarios.length - 1
         ? "结束今天的体验 <span aria-hidden=\"true\">→</span>"
         : "继续进入下一幕 <span aria-hidden=\"true\">→</span>";
+      scenarioScreen.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function showChoiceFeedback(option) {
