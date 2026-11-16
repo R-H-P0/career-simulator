@@ -100,6 +100,19 @@
     .scenario-tools { display: flex; align-items: center; gap: 14px; }
     .scenario-count { color: var(--green); font-size: 12px; font-weight: 750; letter-spacing: .06em; }
     .time-label { color: var(--muted); font-size: 12px; }
+    .play-hud { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: -4px 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .play-hud-copy { display: grid; gap: 4px; }
+    .play-act { color: var(--green); font-size: 11px; font-weight: 750; letter-spacing: .1em; }
+    .play-actions { display: flex; align-items: center; gap: 12px; }
+    .scene-kicker { margin: 0 0 8px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+    .intro-scene { display: flex; flex-direction: column; min-height: 340px; justify-content: center; }
+    .intro-scene-icon { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 20px; border-radius: 17px; background: var(--green-pale); font-size: 26px; }
+    .intro-scene p { max-width: 560px; margin: 0 0 12px; color: var(--muted); font-size: 14px; line-height: 1.85; }
+    .intro-note { margin: 16px 0 22px; padding: 13px 15px; border-left: 3px solid var(--orange); border-radius: 0 10px 10px 0; color: #53615a; background: #f8f6ef; font-size: 12px; line-height: 1.75; }
+    .scenario-screen-content { animation: scene-enter .32s ease both; }
+    @keyframes scene-enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+    .scene-question { margin: 0 0 10px; font-family: Georgia, "Noto Serif SC", "Songti SC", serif; font-size: 26px; font-weight: 600; line-height: 1.4; }
+    .scene-prompt { margin: 0 0 10px; color: var(--muted); font-size: 12px; font-weight: 700; }
     .progress-track { height: 5px; margin: 0 0 24px; overflow: hidden; border-radius: 10px; background: #edf0e9; }
     .progress-fill { width: 0; height: 100%; border-radius: inherit; background: var(--green); transition: width .3s ease; }
     .scenario-context { display: flex; gap: 14px; align-items: flex-start; margin: 18px 0 22px; padding: 16px; border-radius: 13px; background: #f4f5ef; }
@@ -210,6 +223,10 @@
       .career-grid { grid-template-columns: 1fr; gap: 8px; margin-top: 16px; }
       .career-card { padding: 11px 12px; }
       .scenario-title, .welcome h2, .result-title { font-size: 23px; }
+      .scene-question { font-size: 22px; }
+      .play-hud { align-items: flex-start; }
+      .play-actions { gap: 7px; }
+      .play-actions .text-button { font-size: 11px; }
       .scenario-context { margin: 15px 0 17px; padding: 13px; }
       .scenario-tools { gap: 6px; }
       .scenario-tools .time-label { display: none; }
@@ -271,29 +288,49 @@
             <div class="career-grid" id="career-grid" aria-label="选择职业"></div>
           </div>
 
+          <div id="career-intro-screen" hidden>
+            <div class="play-hud">
+              <div class="play-hud-copy"><span class="play-act">工作现场 · 序幕</span><span class="scenario-count" id="intro-career-name"></span></div>
+              <button class="text-button" id="intro-home-button" type="button">⌂ 返回职业选择</button>
+            </div>
+            <div class="intro-scene">
+              <span class="intro-scene-icon" id="intro-icon" aria-hidden="true"></span>
+              <p class="scene-kicker">开始之前</p>
+              <h2 class="scenario-title" id="intro-title"></h2>
+              <p id="intro-copy"></p>
+              <div class="intro-note" id="intro-note"></div>
+              <button class="primary" id="start-experience-button" type="button">开始第一幕 <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+
           <div id="scenario-screen" hidden>
-            <div class="scenario-head">
-              <span class="scenario-count" id="scenario-count"></span>
-              <div class="scenario-tools">
-                <span class="time-label">约 2 分钟 · 没有标准答案</span>
+            <div class="play-hud">
+              <div class="play-hud-copy">
+                <span class="play-act" id="scenario-act"></span>
+                <span class="scenario-count" id="scenario-count"></span>
+              </div>
+              <div class="play-actions">
                 <button class="text-button" id="log-button" type="button">剧情日志</button>
-                <button class="text-button" id="home-button" type="button">⌂ 返回主页</button>
+                <button class="text-button" id="home-button" type="button">⌂ 返回职业选择</button>
               </div>
             </div>
             <div class="progress-track" role="progressbar" aria-label="情境进度" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="progress-bar">
               <div class="progress-fill" id="progress-fill"></div>
             </div>
-            <h2 class="scenario-title" id="scenario-title"></h2>
+            <div class="scenario-screen-content" id="scenario-screen-content">
+            <p class="scene-kicker">工作现场 · <span id="scenario-sequence"></span></p>
+            <h2 class="scene-question" id="scenario-title"></h2>
             <div class="scenario-context">
               <span class="context-icon" id="scenario-icon" aria-hidden="true"></span>
               <p id="scenario-context"></p>
             </div>
-            <p class="side-label">你会更倾向于怎么做？</p>
+            <p class="scene-prompt">此刻，你会更倾向于怎么做？</p>
             <div class="options" id="options"></div>
-            <p class="feedback" id="feedback" hidden><span aria-hidden="true">✦</span><span id="feedback-text"></span></p>
+            <div class="feedback" id="feedback" hidden><span aria-hidden="true">✦</span><span><strong>这一选择可能带来的回应</strong><br><span id="feedback-text"></span></span></div>
             <div class="scenario-actions">
               <button class="text-button" id="back-button" type="button">← 上一题</button>
-              <button class="primary" id="next-button" type="button" disabled>下一题 <span aria-hidden="true">→</span></button>
+              <button class="primary" id="next-button" type="button" disabled>继续进入下一幕 <span aria-hidden="true">→</span></button>
+            </div>
             </div>
           </div>
 
@@ -391,6 +428,7 @@
     const careers = [
       {
         id: "teacher", name: "教师", icon: "📚", description: "课堂互动、学生成长与教学组织",
+        opening: "早读铃声快响了，教案、学生和课堂节奏都等着你一起照看。接下来的情境会带你走过课堂互动、教学安排与家校沟通。",
         dimensions: teacherDimensions, scenarios: teacherScenarios,
         references: [
           { title: "学信网学职平台 · 中学教师", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=j0fd675hgqprjpke" },
@@ -406,6 +444,7 @@
       },
       {
         id: "healthcare", name: "医护人员", icon: "🩺", description: "理解需求、细致观察与团队协作",
+        opening: "工作刚刚开始，患者需求、现场信息和团队交接接连出现。接下来的情境会带你体验沟通、观察与协作中的选择。",
         references: [
           { title: "学信网学职平台 · 护士", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=x4ld42rz8ikh1liv" },
           { title: "国家卫生健康委《护士条例》", url: "https://www.nhc.gov.cn/fzs/c100048/201808/f10825832c6e4c259af327f055becb3a.shtml" }
@@ -456,6 +495,7 @@
       },
       {
         id: "product", name: "产品经理", icon: "🧭", description: "理解用户、判断优先级与推动协作",
+        opening: "团队带着不同声音来到需求讨论现场，信息并不总是完整。接下来的情境会带你体验理解问题、判断优先级与推动协作。",
         references: [
           { title: "学信网学职平台 · 互联网产品经理", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=38p5qcxjcsyjl64r" }
         ],
@@ -505,6 +545,7 @@
       },
       {
         id: "engineer", name: "软件工程师", icon: "💻", description: "拆解问题、保证质量与团队共建",
+        opening: "一个新任务进入开发流程，需求、代码与质量要求需要逐步厘清。接下来的情境会带你体验分析、验证和团队沟通。",
         references: [
           { title: "学信网学职平台 · 计算机软件工程师", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=r3ulul3d64sl5sk4" }
         ],
@@ -554,6 +595,7 @@
       },
       {
         id: "designer", name: "视觉设计师", icon: "🎨", description: "理解受众、探索创意与打磨呈现",
+        opening: "设计需求刚刚到来，受众、表达方向和交付时间都要逐渐清晰。接下来的情境会带你体验探索创意、理解反馈与推进呈现。",
         references: [
           { title: "学信网学职平台 · 用户界面（UI）设计师", url: "https://xz.chsi.com.cn/occupation/occudetail.action?id=qrnpx30r02ekosop" }
         ],
@@ -670,6 +712,7 @@
     let answers = careerProgress.get(activeCareer.id).answers;
     let currentIndex = 0;
     const welcome = document.getElementById("welcome");
+    const careerIntroScreen = document.getElementById("career-intro-screen");
     const scenarioScreen = document.getElementById("scenario-screen");
     const resultsScreen = document.getElementById("results-screen");
     const journeySteps = Array.from(document.querySelectorAll("#journey li"));
@@ -690,7 +733,38 @@
       activeCareer = career;
       const progress = careerProgress.get(career.id);
       answers = progress.answers;
-      showScenario(progress.currentIndex);
+      showCareerIntro(progress);
+    }
+
+    function showCareerIntro(progress) {
+      welcome.hidden = true;
+      scenarioScreen.hidden = true;
+      resultsScreen.hidden = true;
+      careerIntroScreen.hidden = false;
+      updateJourney(1);
+      document.getElementById("intro-career-name").textContent = activeCareer.name;
+      document.getElementById("intro-icon").textContent = activeCareer.icon;
+      document.getElementById("intro-title").textContent = `走进${activeCareer.name}的工作现场`;
+      document.getElementById("intro-copy").textContent = activeCareer.opening;
+      const completed = progress.answers.filter(answer => answer !== null).length;
+      document.getElementById("intro-note").textContent = completed
+        ? `你已经完成 ${completed} / ${activeCareer.scenarios.length} 个情境。返回职业选择不会清除本次浏览中的已有选择。`
+        : `接下来有 ${activeCareer.scenarios.length} 个工作情境。每做出一个选择，都会看到这类做法可能带来的回应；没有标准答案。`;
+      const startLabel = completed === activeCareer.scenarios.length
+        ? "查看本次观察"
+        : completed ? `继续体验（${completed}/${activeCareer.scenarios.length}）` : "开始第一幕";
+      document.getElementById("start-experience-button").innerHTML = `${startLabel} <span aria-hidden="true">→</span>`;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startExperience() {
+      const progress = careerProgress.get(activeCareer.id);
+      const nextUnanswered = progress.answers.findIndex(answer => answer === null);
+      if (nextUnanswered === -1) {
+        makeResults();
+        return;
+      }
+      showScenario(nextUnanswered);
     }
 
     function updateJourney(activeStep) {
@@ -707,10 +781,13 @@
       careerProgress.get(activeCareer.id).currentIndex = index;
       const scenario = activeCareer.scenarios[index];
       welcome.hidden = true;
+      careerIntroScreen.hidden = true;
       resultsScreen.hidden = true;
       scenarioScreen.hidden = false;
       updateJourney(1);
       document.getElementById("scenario-count").textContent = `${activeCareer.name} · 情境 ${index + 1} / ${activeCareer.scenarios.length}`;
+      document.getElementById("scenario-act").textContent = `第 ${index + 1} 幕 · 工作现场`;
+      document.getElementById("scenario-sequence").textContent = `${String(index + 1).padStart(2, "0")} / ${String(activeCareer.scenarios.length).padStart(2, "0")}`;
       document.getElementById("progress-bar").setAttribute("aria-valuemax", String(activeCareer.scenarios.length));
       document.getElementById("progress-fill").style.width = `${((index + 1) / activeCareer.scenarios.length) * 100}%`;
       document.getElementById("progress-bar").setAttribute("aria-valuenow", String(index + 1));
@@ -737,7 +814,9 @@
       document.getElementById("back-button").style.visibility = index === 0 ? "hidden" : "visible";
       const next = document.getElementById("next-button");
       next.disabled = saved === null;
-      next.innerHTML = index === activeCareer.scenarios.length - 1 ? "查看我的观察 <span aria-hidden=\"true\">→</span>" : "下一题 <span aria-hidden=\"true\">→</span>";
+      next.innerHTML = index === activeCareer.scenarios.length - 1
+        ? "结束今天的体验 <span aria-hidden=\"true\">→</span>"
+        : "继续进入下一幕 <span aria-hidden=\"true\">→</span>";
     }
 
     function selectOption(optionIndex) {
@@ -915,6 +994,7 @@
           </div>
         </div>`;
       resultsScreen.hidden = false;
+      careerIntroScreen.hidden = true;
       scenarioScreen.hidden = true;
       updateJourney(2);
       document.getElementById("restart-button").addEventListener("click", restart);
@@ -928,12 +1008,12 @@
       progress.answers = Array(activeCareer.scenarios.length).fill(null);
       progress.currentIndex = 0;
       answers = progress.answers;
-      showScenario(0);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      showCareerIntro(progress);
     }
 
     function showCareerPicker() {
       welcome.hidden = false;
+      careerIntroScreen.hidden = true;
       scenarioScreen.hidden = true;
       resultsScreen.hidden = true;
       updateJourney(0);
@@ -942,6 +1022,8 @@
 
     document.getElementById("back-button").addEventListener("click", () => showScenario(currentIndex - 1));
     document.getElementById("home-button").addEventListener("click", showCareerPicker);
+    document.getElementById("intro-home-button").addEventListener("click", showCareerPicker);
+    document.getElementById("start-experience-button").addEventListener("click", startExperience);
     document.getElementById("log-button").addEventListener("click", openStoryLog);
     document.getElementById("close-log-button").addEventListener("click", () => {
       const dialog = document.getElementById("story-log");
