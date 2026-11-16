@@ -120,19 +120,6 @@
     .option.selected .option-check { opacity: 1; }
     .feedback { display: flex; gap: 9px; margin: 12px 0 0; color: #566a5d; font-size: 12px; line-height: 1.65; }
     .feedback[hidden] { display: none; }
-    .live-analysis { margin-top: 18px; padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: #fafaf6; }
-    .live-analysis-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 12px; }
-    .live-analysis-head h3 { margin: 0; font-size: 12px; }
-    .live-analysis-head span { color: var(--muted); font-size: 10px; }
-    .live-dimensions { display: grid; grid-template-columns: 1fr 1fr; column-gap: 22px; }
-    .live-score-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) 28px; align-items: center; gap: 8px; margin: 7px 0; }
-    .live-score-label { overflow: hidden; color: #52615a; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-    .live-score-track { height: 6px; overflow: hidden; border-radius: 9px; background: #e9eee7; }
-    .live-score-fill { height: 100%; border-radius: inherit; background: #75a186; transition: width .25s ease; }
-    .live-score-value { color: var(--green); font-size: 10px; font-weight: 750; text-align: right; }
-    .choice-impact { min-height: 17px; margin: 10px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
-    .impact-up { color: var(--green-dark); font-weight: 700; }
-    .impact-down { color: #a96840; font-weight: 700; }
     .scenario-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
     .text-button { padding: 9px 0; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 12px; }
     .text-button:hover { color: var(--green); }
@@ -185,9 +172,6 @@
     .story-log-choice { margin: 0 0 7px; color: #46564d; font-size: 12px; line-height: 1.7; }
     .story-log-choice.pending { color: #929b93; font-style: italic; }
     .story-log-feedback { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.65; }
-    .story-log-impact { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
-    .impact-chip { padding: 4px 7px; border-radius: 99px; background: #eef3ed; color: var(--green-dark); font-size: 9px; }
-    .impact-chip.down { background: #fbf0e9; color: #9c603c; }
     [hidden] { display: none !important; }
 
     @media (max-width: 760px) {
@@ -213,8 +197,6 @@
       .scenario-context { margin: 15px 0 17px; padding: 13px; }
       .scenario-tools { gap: 6px; }
       .scenario-tools .time-label { display: none; }
-      .live-dimensions { grid-template-columns: 1fr; }
-      .live-score-row { grid-template-columns: 96px minmax(0, 1fr) 28px; }
       .option { padding: 12px; grid-template-columns: 25px minmax(0, 1fr) 14px; gap: 8px; }
       .option-text { font-size: 12px; }
       .report-grid { grid-template-columns: 1fr; }
@@ -292,14 +274,6 @@
             <p class="side-label">你会更倾向于怎么做？</p>
             <div class="options" id="options"></div>
             <p class="feedback" id="feedback" hidden><span aria-hidden="true">✦</span><span id="feedback-text"></span></p>
-            <section class="live-analysis" aria-label="实时维度评分">
-              <div class="live-analysis-head">
-                <h3>实时维度观察</h3>
-                <span>50 为起点，非能力分数</span>
-              </div>
-              <div class="live-dimensions" id="live-dimensions"></div>
-              <p class="choice-impact" id="choice-impact" aria-live="polite">选择一个做法后，会看到相关维度的变化。</p>
-            </section>
             <div class="scenario-actions">
               <button class="text-button" id="back-button" type="button">← 上一题</button>
               <button class="primary" id="next-button" type="button" disabled>下一题 <span aria-hidden="true">→</span></button>
@@ -720,7 +694,6 @@
       const next = document.getElementById("next-button");
       next.disabled = saved === null;
       next.innerHTML = index === activeCareer.scenarios.length - 1 ? "查看我的观察 <span aria-hidden=\"true\">→</span>" : "下一题 <span aria-hidden=\"true\">→</span>";
-      updateLiveAnalysis();
     }
 
     function selectOption(optionIndex) {
@@ -734,52 +707,21 @@
       document.getElementById("feedback-text").textContent = scenario.options[optionIndex].feedback;
       document.getElementById("feedback").hidden = false;
       document.getElementById("next-button").disabled = false;
-      updateLiveAnalysis();
-    }
-
-    function getScenarioDeltas(scenarioIndex, optionIndex) {
-      const scenario = activeCareer.scenarios[scenarioIndex];
-      const selected = scenario.options[optionIndex];
-      return activeCareer.dimensions.map((dimension, dimensionIndex) => {
-        const average = scenario.options.reduce((sum, option) => sum + option.scores[dimensionIndex], 0) / scenario.options.length;
-        return { ...dimension, delta: Math.round((selected.scores[dimensionIndex] - average) * 8) };
-      });
     }
 
     function getObservations() {
       const totals = activeCareer.dimensions.map((dimension, dimensionIndex) => {
-        const raw = answers.reduce((sum, optionIndex, scenarioIndex) => {
-          if (optionIndex === null) return sum;
-          return sum + getScenarioDeltas(scenarioIndex, optionIndex)[dimensionIndex].delta;
-        }, 0);
-        return { ...dimension, value: Math.max(0, Math.min(100, 50 + raw)) };
+        const selectedScores = answers.flatMap((optionIndex, scenarioIndex) => (
+          optionIndex === null ? [] : [activeCareer.scenarios[scenarioIndex].options[optionIndex].scores[dimensionIndex]]
+        ));
+        const average = selectedScores.reduce((sum, score) => sum + score, 0) / selectedScores.length;
+        const value = Math.max(0, Math.min(100, Math.round(50 + (average - 1.5) * 50)));
+        return { ...dimension, value };
       });
       const sorted = [...totals].sort((a, b) => b.value - a.value);
       const high = sorted.filter(item => item.value >= 56);
       const low = [...sorted].reverse().filter(item => item.value <= 44);
       return { totals, strengths: high.length ? high.slice(0, 2) : sorted.slice(0, 1), challenges: low.slice(0, 2) };
-    }
-
-    function updateLiveAnalysis() {
-      const totals = getObservations().totals;
-      document.getElementById("live-dimensions").innerHTML = totals.map(item => `
-        <div class="live-score-row">
-          <span class="live-score-label">${item.name}</span>
-          <span class="live-score-track"><span class="live-score-fill" style="display:block;width:${item.value}%"></span></span>
-          <span class="live-score-value">${item.value}</span>
-        </div>`).join("");
-      const selectedIndex = answers[currentIndex];
-      const impact = document.getElementById("choice-impact");
-      if (selectedIndex === null) {
-        impact.textContent = "选择一个做法后，会看到相关维度的变化。";
-      } else {
-        const changes = getScenarioDeltas(currentIndex, selectedIndex).filter(item => item.delta !== 0);
-        impact.innerHTML = changes.length
-          ? `本次选择变化：${changes.map(item => `<span class="${item.delta > 0 ? "impact-up" : "impact-down"}">${item.name} ${item.delta > 0 ? "+" : ""}${item.delta}</span>`).join("　")}`
-          : "本次选择与该情境的平均倾向接近，分数没有明显变化。";
-      }
-      const answered = answers.filter(answer => answer !== null).length;
-      document.getElementById("log-button").textContent = `剧情日志 ${answered}/${activeCareer.scenarios.length}`;
     }
 
     function createRadarChart(totals) {
@@ -837,15 +779,6 @@
           feedback.className = "story-log-feedback";
           feedback.textContent = scenario.options[answerIndex].feedback;
           entry.append(feedback);
-          const chips = document.createElement("div");
-          chips.className = "story-log-impact";
-          getScenarioDeltas(scenarioIndex, answerIndex).filter(item => item.delta !== 0).forEach(item => {
-            const chip = document.createElement("span");
-            chip.className = `impact-chip${item.delta < 0 ? " down" : ""}`;
-            chip.textContent = `${item.name} ${item.delta > 0 ? "+" : ""}${item.delta}`;
-            chips.append(chip);
-          });
-          entry.append(chips);
         }
         list.append(entry);
       });
@@ -883,7 +816,7 @@
           <section class="result-insights">
             <h3 class="panel-title">本次选择观察</h3>
             <p class="result-lead">${leadText}</p>
-            <p class="score-legend">50 为中间起点；数值呈现你相对选择了哪些应对方式，不代表能力百分比。</p>
+            <p class="score-legend">维度图仅在完成答题后生成，归纳你所选做法呈现的倾向；数值不是能力百分比。</p>
             <div class="dimension-list">
               ${totals.map(item => {
                 const note = item.value >= 56 ? "相关应对方式较常出现" : item.value <= 44 ? "相关应对方式较少出现" : "选择分布相对均衡";
