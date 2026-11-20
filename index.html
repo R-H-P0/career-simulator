@@ -1399,7 +1399,7 @@
         ? `你已经完成 ${completed} / ${activeCareer.scenarios.length} 个情境。返回职业选择不会清除本次浏览中的已有选择。`
         : `接下来有 ${activeCareer.scenarios.length} 个工作情境，每个情境包含现场选择和后续处置。`;
       const startLabel = completed === activeCareer.scenarios.length
-        ? "查看本次观察"
+        ? "结算本次体验"
         : completed ? `继续体验（${completed}/${activeCareer.scenarios.length}）` : "开始第一幕";
       document.getElementById("start-experience-button").innerHTML = `${startLabel} <span aria-hidden="true">→</span>`;
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1476,7 +1476,7 @@
       next.innerHTML = stage === 0
         ? "继续 <span aria-hidden=\"true\">→</span>"
         : index === activeCareer.scenarios.length - 1
-          ? "查看本次观察 <span aria-hidden=\"true\">→</span>"
+          ? "结算本次体验 <span aria-hidden=\"true\">→</span>"
           : "下一幕 <span aria-hidden=\"true\">→</span>";
       scenarioScreen.scrollIntoView({ behavior: "smooth", block: "start" });
     }
