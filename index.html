@@ -387,7 +387,7 @@
             </div>
             <div class="scenario-actions">
               <button class="text-button" id="back-button" type="button">← 上一题</button>
-              <button class="primary" id="next-button" type="button" disabled>继续进入下一幕 <span aria-hidden="true">→</span></button>
+              <button class="primary" id="next-button" type="button" disabled>下一幕 <span aria-hidden="true">→</span></button>
             </div>
             </div>
           </div>
@@ -1474,17 +1474,17 @@
       const next = document.getElementById("next-button");
       next.disabled = saved === null;
       next.innerHTML = stage === 0
-        ? "查看后续处置 <span aria-hidden=\"true\">→</span>"
+        ? "继续 <span aria-hidden=\"true\">→</span>"
         : index === activeCareer.scenarios.length - 1
           ? "查看本次观察 <span aria-hidden=\"true\">→</span>"
-          : "继续进入下一幕 <span aria-hidden=\"true\">→</span>";
+          : "下一幕 <span aria-hidden=\"true\">→</span>";
       scenarioScreen.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function showChoiceFeedback(option) {
       const heading = document.getElementById("feedback-heading");
       const outcome = document.getElementById("feedback-outcome");
-      heading.textContent = option.outcome ? "可能的现场回响" : "这一选择可能带来的回应";
+      heading.textContent = option.outcome ? "可能的及时反馈" : "这一选择可能带来的回应";
       outcome.hidden = !option.outcome;
       outcome.textContent = option.outcome || "";
       document.getElementById("feedback-text").textContent = option.feedback;
@@ -1646,7 +1646,7 @@
           if (scenario.options[answerIndex].outcome) {
             const outcome = document.createElement("p");
             outcome.className = "story-log-outcome";
-            outcome.textContent = `可能的现场回响：${scenario.options[answerIndex].outcome}`;
+            outcome.textContent = `可能的及时反馈：${scenario.options[answerIndex].outcome}`;
             entry.append(outcome);
           }
           const feedback = document.createElement("p");
