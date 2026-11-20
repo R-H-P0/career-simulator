@@ -38,8 +38,8 @@
     .topbar { height: 82px; display: flex; align-items: center; justify-content: space-between; }
     .brand { display: flex; align-items: center; gap: 11px; font-size: 15px; font-weight: 750; letter-spacing: .02em; }
     .brand-mark {
-      display: grid; place-items: center; width: 35px; height: 35px; border-radius: 12px;
-      color: white; background: var(--green); font-size: 17px;
+      display: block; width: 35px; height: 35px; flex: 0 0 35px; border-radius: 50%;
+      object-fit: cover; background: var(--green);
     }
     .topbar-actions { display: flex; align-items: center; gap: 16px; }
     .top-note { color: var(--muted); font-size: 13px; }
@@ -297,7 +297,7 @@
 <body>
   <div class="shell">
     <header class="topbar">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">知</span><span>职业情境体验</span></div>
+      <div class="brand"><img class="brand-mark" src="assets/workplace-dungeon-mark.png" alt="" aria-hidden="true"><span>职业情境体验</span></div>
       <div class="topbar-actions">
         <span class="top-note">探索一种可能，不急着下结论</span>
         <button class="home-settings-button" id="home-settings-button" type="button" aria-haspopup="dialog" aria-controls="home-settings">⚙ 主页设置</button>
